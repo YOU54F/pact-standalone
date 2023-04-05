@@ -3,10 +3,8 @@ require 'bundler/setup'
 
 PACKAGE_NAME = "pact"
 VERSION = File.read('VERSION').strip
-TRAVELING_RUBY_VERSION = "20220709-3.1.2"
+TRAVELING_RUBY_VERSION = "20230504-3.1.2"
 PLUGIN_CLI_VERSION = "0.0.1"
-JSON_GEM_VERSION = "2.6.3"
-RUBY_VERSION = "2.4.0"
 
 desc "Package pact-ruby-standalone for OSX, Linux x86_64 and Win32 x86_64"
 task :package => ['package:linux:x86_64', 'package:osx:x86_64', 'package:osx:arm64']
@@ -48,7 +46,7 @@ namespace :package do
     sh "mkdir -p build/tmp/lib/pact/mock_service"
     # sh "cp lib/pact/mock_service/version.rb build/tmp/lib/pact/mock_service/version.rb"
     Bundler.with_clean_env do
-      sh "cd build/tmp && env BUNDLE_IGNORE_CONFIG=1 bundle lock --add-platform x64-mingw32 && env BUNDLE_IGNORE_CONFIG=1 bundle install --path build/vendor --without development"
+      sh "cd build/tmp && env BUNDLE_IGNORE_CONFIG=1 bundle lock --add-platform x64-mingw32 && env BUNDLE_IGNORE_CONFIG=1 BUNDLE_DEPLOYMENT=true bundle install --path ../vendor"
       generate_readme
     end
     sh "rm -rf build/tmp"
@@ -112,7 +110,6 @@ def create_package(version, source_target, package_target, os_type)
   sh "cp packaging/Gemfile packaging/Gemfile.lock #{package_dir}/lib/vendor/"
   sh "mkdir #{package_dir}/lib/vendor/.bundle"
   sh "cp packaging/bundler-config #{package_dir}/lib/vendor/.bundle/config"
-  sh "cp #{package_dir}/lib/vendor/ruby/#{RUBY_VERSION}/specifications/json-#{JSON_GEM_VERSION}.gemspec #{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_VERSION}/specifications/default/json-#{JSON_GEM_VERSION}.gemspec"
 
   remove_unnecessary_files package_dir
   install_plugin_cli package_dir, package_target
@@ -210,7 +207,7 @@ end
 
 def download_runtime(version, target)
   sh "cd build && curl -L -O --fail " +
-    "https://github.com/YOU54F/traveling-ruby/releases/download/rel-20220709/traveling-ruby-#{version}-#{target}.tar.gz"
+    "https://github.com/YOU54F/traveling-ruby/releases/download/rel-20230504/traveling-ruby-#{version}-#{target}.tar.gz"
 end
 
 def install_plugin_cli(package_dir, package_target)
