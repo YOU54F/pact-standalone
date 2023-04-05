@@ -1,3 +1,17 @@
+<a name="v2.0.00"></a>
+### v2.0.00 (2023-04-05)
+
+
+#### Features
+
+* test osx arm64/x64 + linux/x64 + ruby 3.1.2	 ([32bf9e7](/../../commit/32bf9e7))
+
+
+#### Bug Fixes
+
+* cp json gemspec reqd post 2.0.4 update	 ([a15fd99](/../../commit/a15fd99))
+
+
 <a name="v1.92.0"></a>
 ### v1.92.0 (2022-11-23)
 
