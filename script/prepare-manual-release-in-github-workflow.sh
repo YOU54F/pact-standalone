@@ -16,7 +16,8 @@ echo "::set-output name=tag::${tag}"
 echo "::set-output name=increment::${INCREMENT}"
 
 bundle exec rake package
-pushd pkg; for file in *.{zip,gz}; do sha1sum -b "$file" > "${file}.checksum"; done; popd;
+# pushd pkg; for file in *.{zip,gz}; do sha1sum -b "$file" > "${file}.checksum"; done; popd;
+pushd pkg; for file in *.{gz}; do sha1sum -b "$file" > "${file}.checksum"; done; popd;
 cat pkg/*.checksum > pkg/pact-`cat VERSION`.checksum
 
 bundle exec rake generate_release_notes[$tag]
