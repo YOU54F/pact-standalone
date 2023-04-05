@@ -3,13 +3,14 @@ require 'bundler/setup'
 
 PACKAGE_NAME = "pact"
 VERSION = File.read('VERSION').strip
-TRAVELING_RUBY_VERSION = "20210206-2.4.10"
+TRAVELING_RUBY_VERSION = "20220709-3.1.2"
 PLUGIN_CLI_VERSION = "0.0.1"
 JSON_GEM_VERSION = "2.6.3"
 RUBY_VERSION = "2.4.0"
 
 desc "Package pact-ruby-standalone for OSX, Linux x86_64 and Win32 x86_64"
-task :package => ['package:linux:x86_64', 'package:osx', 'package:win32']
+task :package => ['package:linux:x86_64', 'package:osx:x86_64', 'package:osx:arm64']
+# task :package => ['package:linux:x86_64', 'package:osx', 'package:win32']
 
 namespace :package do
   namespace :linux do
@@ -19,9 +20,16 @@ namespace :package do
     end
   end
 
-  desc "Package pact-ruby-standalone for OS X"
-  task :osx => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx.tar.gz"] do
-    create_package(TRAVELING_RUBY_VERSION, "osx", "osx", :unix)
+  namespace :osx do
+  desc "Package pact-ruby-standalone for OS X x86_64"
+  task :x86_64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-x86_64.tar.gz"] do
+    create_package(TRAVELING_RUBY_VERSION, "osx-x86_64", "osx-x86_64", :unix)
+  end
+
+  desc "Package pact-ruby-standalone for OS X arm64"
+  task :arm64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-arm64.tar.gz"] do
+    create_package(TRAVELING_RUBY_VERSION, "osx-arm64", "osx-arm64", :unix)
+  end
   end
 
   desc "Package pact-ruby-standalone for Win32 x86_64"
@@ -31,8 +39,8 @@ namespace :package do
 
   desc "Install gems to local directory"
   task :bundle_install do
-    if RUBY_VERSION !~ /^2\.4\./
-      abort "You can only 'bundle install' using Ruby 2.4, because that's what Traveling Ruby uses."
+    if RUBY_VERSION !~ /^3\.1\./
+      abort "You can only 'bundle install' using Ruby 3.1.2, because that's what Traveling Ruby uses."
     end
     sh "rm -rf build/tmp"
     sh "mkdir -p build/tmp"
@@ -40,7 +48,7 @@ namespace :package do
     sh "mkdir -p build/tmp/lib/pact/mock_service"
     # sh "cp lib/pact/mock_service/version.rb build/tmp/lib/pact/mock_service/version.rb"
     Bundler.with_clean_env do
-      sh "cd build/tmp && env BUNDLE_IGNORE_CONFIG=1 bundle lock --add-platform x64-mingw32 && env BUNDLE_IGNORE_CONFIG=1 bundle install --path ../vendor --without development"
+      sh "cd build/tmp && env BUNDLE_IGNORE_CONFIG=1 bundle lock --add-platform x64-mingw32 && env BUNDLE_IGNORE_CONFIG=1 bundle install --path build/vendor --without development"
       generate_readme
     end
     sh "rm -rf build/tmp"
@@ -61,8 +69,12 @@ file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-x86_64.tar.gz" do
   download_runtime(TRAVELING_RUBY_VERSION, "linux-x86_64")
 end
 
-file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx.tar.gz" do
-  download_runtime(TRAVELING_RUBY_VERSION, "osx")
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-x86_64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "osx-x86_64")
+end
+
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-arm64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "osx-arm64")
 end
 
 file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-win32-86_64.tar.gz" do
@@ -198,7 +210,7 @@ end
 
 def download_runtime(version, target)
   sh "cd build && curl -L -O --fail " +
-    "http://d6r77u77i8pq3.cloudfront.net/releases/traveling-ruby-#{version}-#{target}.tar.gz"
+    "https://github.com/YOU54F/traveling-ruby/releases/download/rel-20220709/traveling-ruby-#{version}-#{target}.tar.gz"
 end
 
 def install_plugin_cli(package_dir, package_target)
@@ -207,7 +219,7 @@ def install_plugin_cli(package_dir, package_target)
     sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-x86_64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
-  when "osx"
+  when "osx-x86_64"
     sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-x86_64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
