@@ -1,3 +1,12 @@
+<a name="v2.1.0"></a>
+### v2.1.0 (2023-04-05)
+
+
+#### Features
+
+* support linux aarch64 with ruby 3.1.2	 ([e463e96](/../../commit/e463e96))
+
+
 <a name="v2.0.00"></a>
 ### v2.0.00 (2023-04-05)
 
