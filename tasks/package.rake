@@ -7,7 +7,7 @@ TRAVELING_RUBY_VERSION = "20230504-3.1.2"
 PLUGIN_CLI_VERSION = "0.0.1"
 
 desc "Package pact-ruby-standalone for OSX, Linux x86_64 and Win32 x86_64"
-task :package => ['package:linux:x86_64', 'package:osx:x86_64', 'package:osx:arm64']
+task :package => ['package:linux:x86_64','package:linux:arm64', 'package:osx:x86_64', 'package:osx:arm64']
 # task :package => ['package:linux:x86_64', 'package:osx', 'package:win32']
 
 namespace :package do
@@ -15,6 +15,11 @@ namespace :package do
     desc "Package pact-ruby-standalone for Linux x86_64"
     task :x86_64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-x86_64.tar.gz"] do
       create_package(TRAVELING_RUBY_VERSION, "linux-x86_64", "linux-x86_64", :unix)
+    end
+
+    desc "Package pact-ruby-standalone for Linux arm64"
+    task :arm64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-arm64.tar.gz"] do
+      create_package(TRAVELING_RUBY_VERSION, "linux-arm64", "linux-arm64", :unix)
     end
   end
 
@@ -65,6 +70,10 @@ end
 
 file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-x86_64.tar.gz" do
   download_runtime(TRAVELING_RUBY_VERSION, "linux-x86_64")
+end
+
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-arm64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "linux-arm64")
 end
 
 file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-x86_64.tar.gz" do

@@ -1,14 +1,17 @@
 #!/bin/bash -e
 #
 # Usage:
-#   $ curl -fsSL https://raw.githubusercontent.com/you54f/pact-ruby-standalone/master/install.sh | bash
+#   $ curl -fsSL https://raw.githubusercontent.com/you54f/pact-ruby-standalone/ruby_3.1.2_upgrade/install.sh | bash
 # or
-#   $ wget -q https://raw.githubusercontent.com/you54f/pact-ruby-standalone/master/install.sh -O- | bash
+#   $ wget -q https://raw.githubusercontent.com/you54f/pact-ruby-standalone/ruby_3.1.2_upgrade/install.sh -O- | bash
 #
 
 case $(uname -sm) in
   'Linux x86_64')
     os='linux-x86_64'
+    ;;
+  'Linux aarch64')
+    os='linux-arm64'
     ;;
   'Darwin arm64')
     os='osx-arm64'
