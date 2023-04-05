@@ -7,8 +7,7 @@ TRAVELING_RUBY_VERSION = "20230504-3.1.2"
 PLUGIN_CLI_VERSION = "0.0.1"
 
 desc "Package pact-ruby-standalone for OSX, Linux x86_64 and Win32 x86_64"
-task :package => ['package:linux:x86_64','package:linux:arm64', 'package:osx:x86_64', 'package:osx:arm64']
-# task :package => ['package:linux:x86_64', 'package:osx', 'package:win32']
+task :package => ['package:linux:x86_64','package:linux:arm64', 'package:osx:x86_64', 'package:osx:arm64','package:win32']
 
 namespace :package do
   namespace :linux do
