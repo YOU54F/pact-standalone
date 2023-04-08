@@ -23,6 +23,12 @@ Ruby is not required on the host platform, Ruby 3.1.2 is provided in the distrib
 
 | Version| OS     | Ruby      | Architecture | Supported |
 | -------| -------| ------- | ------------ | --------- |
+| 3.x | OSX    | 3.2.2     | x86_64       | ✅         |
+| 3.x | OSX    | 3.2.2     | aarch64 (arm)| ✅         |
+| 3.x | Linux  | 3.2.2   | x86_64       | ✅         |
+| 3.x | Linux  | 3.2.2   | aarch64 (arm)| ✅         |
+| 3.x | Windows| 3.2.2 | x86_64       | ❌         |
+| 3.x | Windows| 3.2.2 | aarch64 (arm)| ❌         |
 | 2.x| OSX    | 3.1.2     | x86_64       | ✅         |
 | 2.x| OSX    | 3.1.2     | aarch64 (arm)| ✅         |
 | 2.x| Linux  | 3.1.2   | x86_64       | ✅         |
