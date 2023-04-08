@@ -1,3 +1,14 @@
+<a name="v3.0.0"></a>
+### v3.0.0 (2023-04-08)
+
+
+#### Features
+
+* create docker package builder	 ([384fcc1](/../../commit/384fcc1))
+* ruby 3.2.2 upgrade	 ([857189a](/../../commit/857189a))
+* support win x86_64 with ruby 3.1.2	 ([61d27ac](/../../commit/61d27ac))
+
+
 <a name="v2.1.0"></a>
 ### v2.1.0 (2023-04-05)
 
