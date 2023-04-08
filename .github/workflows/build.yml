@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: [ ubuntu-latest,windows-latest,macos-latest ]
     steps:
     - uses: actions/checkout@v3
 
@@ -17,3 +17,22 @@ jobs:
 
     - name: Build
       run: bundle exec rake package
+
+    - name: test package
+      if: ${{ runner.os == 'Linux'}}
+      run: |
+        cd pkg
+        tar xvf *linux-x86_64.tar.gz
+        ./pact/bin/pact
+    - name: test package
+      if: ${{ runner.os == 'MacOD'}}
+      run: |
+        cd pkg
+        tar xvf *osx-x86_64.tar.gz
+        ./pact/bin/pact
+    - name: test package
+      if: ${{ runner.os == 'Windows'}}
+      run: |
+        cd pkg
+        tar -xf *win32.zip
+        .\pact\bin\pact.bat
