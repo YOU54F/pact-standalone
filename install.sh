@@ -1,9 +1,9 @@
 #!/bin/bash -e
 #
 # Usage:
-#   $ curl -fsSL https://raw.githubusercontent.com/you54f/pact-ruby-standalone/ruby_3.1.2_upgrade/install.sh | bash
+#   $ curl -fsSL https://raw.githubusercontent.com/you54f/pact-ruby-standalone/ruby_3.2.2_upgrade/install.sh | bash
 # or
-#   $ wget -q https://raw.githubusercontent.com/you54f/pact-ruby-standalone/ruby_3.1.2_upgrade/install.sh -O- | bash
+#   $ wget -q https://raw.githubusercontent.com/you54f/pact-ruby-standalone/ruby_3.2.2_upgrade/install.sh -O- | bash
 #
 
 case $(uname -sm) in

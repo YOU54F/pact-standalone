@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ruby:3.1.2-alpine
+FROM --platform=linux/amd64 ruby:3.2.2-alpine
 
 # Installation path
 ENV HOME=/app
@@ -11,5 +11,4 @@ RUN set -ex && \
 
 RUN gem install bundler -v 2.4.0
 COPY packaging/Gemfile packaging/Gemfile.lock $HOME/
-RUN bundle update json
-RUN bundle install
+RUN bundle update
