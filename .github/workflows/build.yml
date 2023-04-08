@@ -8,6 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest","windows-latest","macos-latest"]
+        # os: ["ubuntu-latest","macos-latest"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
@@ -36,6 +37,7 @@ jobs:
         ./pact/bin/pact
     - name: test package
       if: ${{ runner.os == 'Windows'}}
+      shell: bash
       run: |
         cd pkg
         tar -xf *win32.zip
