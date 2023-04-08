@@ -11,4 +11,4 @@ RUN set -ex && \
 
 RUN gem install bundler -v 2.4.0
 COPY packaging/Gemfile packaging/Gemfile.lock $HOME/
-RUN bundle update
+RUN bundle install --no-cache
