@@ -4,7 +4,7 @@ require 'bundler/setup'
 PACKAGE_NAME = "pact"
 VERSION = File.read('VERSION').strip
 TRAVELING_RUBY_VERSION = "20230508-3.2.2"
-PLUGIN_CLI_VERSION = "0.0.1"
+PLUGIN_CLI_VERSION = "0.1.0"
 
 desc "Package pact-ruby-standalone for OSX, Linux x86_64 and Win32 x86_64"
 task :package => ['package:linux:x86_64','package:linux:arm64', 'package:osx:x86_64', 'package:osx:arm64','package:win32']
@@ -224,8 +224,16 @@ def install_plugin_cli(package_dir, package_target)
     sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-x86_64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
+  when "linux-arm64"
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-aarch64.gz"
+    sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
+    sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
   when "osx-x86_64"
     sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-x86_64.gz"
+    sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
+    sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
+  when "osx-arm64"
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-aarch64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
   when "win32"
