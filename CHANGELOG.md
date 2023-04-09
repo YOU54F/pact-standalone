@@ -1,3 +1,12 @@
+<a name="v3.1.0"></a>
+### v3.1.0 (2023-04-08)
+
+
+#### Features
+
+* add support for osx/liunx arm pact-plugin-cli	 ([92aad9a](/../../commit/92aad9a))
+
+
 <a name="v3.0.0"></a>
 ### v3.0.0 (2023-04-08)
 
