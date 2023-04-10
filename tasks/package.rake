@@ -7,7 +7,7 @@ TRAVELING_RUBY_VERSION = "20230508-3.2.2"
 PLUGIN_CLI_VERSION = "0.1.0"
 
 desc "Package pact-ruby-standalone for OSX, Linux x86_64 and Win32 x86_64"
-task :package => ['package:linux:x86_64','package:linux:arm64', 'package:osx:x86_64', 'package:osx:arm64','package:win32']
+task :package => ['package:linux:x86_64','package:linux:arm64', 'package:osx:x86_64', 'package:osx:arm64','package:win32:x86_64','package:win32:x86']
 
 namespace :package do
   namespace :linux do
@@ -33,12 +33,16 @@ namespace :package do
     create_package(TRAVELING_RUBY_VERSION, "osx-arm64", "osx-arm64", :unix)
   end
   end
-
-  desc "Package pact-ruby-standalone for Win32 x86_64"
-  task :win32 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-win32-86_64.tar.gz"] do
-    create_package(TRAVELING_RUBY_VERSION, "x86_64-win32", "win32", :windows)
+  namespace :win32 do
+    desc "Package pact-ruby-standalone for Win32 x86_64"
+    task :x86_64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-x86_64-win32.tar.gz"] do
+      create_package(TRAVELING_RUBY_VERSION, "x86_64-win32", "x86_64-win32", :windows)
+    end
+    desc "Package pact-ruby-standalone for Win32 x86"
+    task :x86 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-x86-win32.tar.gz"] do
+      create_package(TRAVELING_RUBY_VERSION, "x86-win32", "x86-win32", :windows)
+    end
   end
-
   desc "Install gems to local directory"
   task :bundle_install do
     if RUBY_VERSION !~ /^3\.2\./
@@ -83,8 +87,11 @@ file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-arm64.tar.gz" do
   download_runtime(TRAVELING_RUBY_VERSION, "osx-arm64")
 end
 
-file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-win32-86_64.tar.gz" do
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-x86_64-win32.tar.gz" do
   download_runtime(TRAVELING_RUBY_VERSION, "x86_64-win32")
+end
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-x86-win32.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "x86-win32")
 end
 
 def create_package(version, source_target, package_target, os_type)
@@ -236,7 +243,11 @@ def install_plugin_cli(package_dir, package_target)
     sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-aarch64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
-  when "win32"
+  when "x86_64-win32"
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.exe.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-windows-x86_64.exe.gz"
+    sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.exe.gz"
+    sh "chmod +x #{package_dir}/bin/pact-plugin-cli.exe"
+  when "x86-win32"
     sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.exe.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-windows-x86_64.exe.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.exe.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli.exe"
