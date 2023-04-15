@@ -71,28 +71,28 @@ namespace :package do
   end
 end
 
-# file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-x86_64.tar.gz" do
-#   download_runtime(TRAVELING_RUBY_VERSION, "linux-x86_64")
-# end
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-x86_64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "linux-x86_64")
+end
 
-# file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-arm64.tar.gz" do
-#   download_runtime(TRAVELING_RUBY_VERSION, "linux-arm64")
-# end
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-arm64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "linux-arm64")
+end
 
-# file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-x86_64.tar.gz" do
-#   download_runtime(TRAVELING_RUBY_VERSION, "osx-x86_64")
-# end
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-x86_64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "osx-x86_64")
+end
 
-# file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-arm64.tar.gz" do
-#   download_runtime(TRAVELING_RUBY_VERSION, "osx-arm64")
-# end
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-arm64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "osx-arm64")
+end
 
-# file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86_64.tar.gz" do
-#   download_runtime(TRAVELING_RUBY_VERSION, "windows-x86_64")
-# end
-# file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86.tar.gz" do
-#   download_runtime(TRAVELING_RUBY_VERSION, "windows-x86")
-# end
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86_64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "windows-x86_64")
+end
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, "windows-x86")
+end
 
 def create_package(version, source_target, package_target, os_type)
   package_dir = "#{PACKAGE_NAME}"
