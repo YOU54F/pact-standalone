@@ -1,3 +1,13 @@
+<a name="v2.2.1"></a>
+### v2.2.1 (2023-06-09)
+
+
+#### Features
+
+* support building multiple bundles	 ([fb7d41c](/../../commit/fb7d41c))
+* all tools bundle	 ([7d6044a](/../../commit/7d6044a))
+
+
 <a name="v2.0.3"></a>
 ### v2.0.3 (2023-07-10)
 
