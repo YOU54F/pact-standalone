@@ -16,6 +16,10 @@ echo "tag=${tag}" >> $GITHUB_OUTPUT
 echo "increment=${INCREMENT}" >> $GITHUB_OUTPUT
 
 bundle exec rake package
+TRIM_PACKAGE_FULL=true bundle exec rake package
+PACKAGE_PACT_RUST_TOOLS=true bundle exec rake package
+PACKAGE_PACT_FFI=true bundle exec rake package
+PACKAGE_PACT_RUST_TOOLS=true PACKAGE_PACT_FFI=true bundle exec rake package
 pushd pkg; for file in *.{zip,gz}; do sha1sum -b "$file" > "${file}.checksum"; done; popd;
 cat pkg/*.checksum > pkg/pact-`cat VERSION`.checksum
 
