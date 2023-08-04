@@ -1,3 +1,23 @@
+<a name="v2.3.0"></a>
+### v2.3.0 (2023-07-10)
+
+
+#### Features
+
+* **gems**
+  * update to pact_broker-client (1.68.0)	 ([562d8a9](/../../commit/562d8a9))
+  * update to pact-mock_service (3.11.2)	 ([7421bd4](/../../commit/7421bd4))
+
+* support building multiple bundles	 ([fb7d41c](/../../commit/fb7d41c))
+* all tools bundle	 ([7d6044a](/../../commit/7d6044a))
+
+
+#### Bug Fixes
+
+* **docs**
+  * correct windows filename to end in .zip in release notes	 ([308a296](/../../commit/308a296))
+
+
 <a name="v2.2.1"></a>
 ### v2.2.1 (2023-06-09)
 
