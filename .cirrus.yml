@@ -148,7 +148,7 @@ debian_x64_task:
 
 STANDALONE_INSTALL_TASK_TEMPLATE: &STANDALONE_INSTALL_TASK_TEMPLATE
   install_script: |
-    curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | bash \
+    curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | sh \
     && ln -s $PWD/pact/bin/* /usr/local/bin \
     && ls pact/bin/ \
     && ls /usr/local/bin
@@ -178,7 +178,7 @@ cli_test_alpine_arm_task:
   arm_container:
     image: $IMAGE
     <<: *DOCKER_ARGS_ARM64_TEMPLATE
-  curl_script: apk add curl bash gcompat libc6-compat 
+  curl_script: apk add curl sh gcompat libc6-compat 
   <<: *STANDALONE_INSTALL_TASK_TEMPLATE
   <<: *TEST_RUBY_CLI_TASK_TEMPLATE
 
@@ -208,7 +208,7 @@ cli_test_alpine_task:
   container:
     image: $IMAGE
     <<: *DOCKER_ARGS_ARM64_TEMPLATE
-  curl_script: apk add curl bash gcompat libc6-compat 
+  curl_script: apk add curl sh gcompat libc6-compat 
   <<: *STANDALONE_INSTALL_TASK_TEMPLATE
   <<: *TEST_RUBY_CLI_TASK_TEMPLATE
 
