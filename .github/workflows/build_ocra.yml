@@ -15,20 +15,32 @@ jobs:
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2.2
-    - name: Set up environment
-      run: bundle install
-    - name: Set up environment
-      run: cd packaging && bundle install
-    - name: Install ocran
-      run: gem install ocran
-    - name: Build
-      run: ocran packaging/pact-broker.rb --dll ruby_builtin_dlls/zlib1.dll --dll ruby_builtin_dlls/libgmp-10.dll --dll ruby_builtin_dlls/libssl-3-x64.dll --dll ruby_builtin_dlls/libyaml-0-2.dll --add-all-core
+    - name: package
+      run: ./scripts/package-with-ocra.sh
+    # - name: Set up environment
+    #   run: cd packaging && bundle install
+    # - name: Install ocran
+    #   run: gem install ocran
+    # - name: Build
+    #   run: |
+    #     ocran pact-broker.rb \
+    #       ca-bundle.crt \
+    #       --verbose \
+    #       --output pact-broker-cli.exe \
+    #       --gem-all \
+    #       --add-all-core \
+    #       --gem-full=openssl \
+    #       --dll ruby_builtin_dlls/zlib1.dll \
+    #       --dll ruby_builtin_dlls/libgmp-10.dll \
+    #       --dll ruby_builtin_dlls/libyaml-0-2.dll \
+    #       --dll ruby_builtin_dlls/libssl-3-x64.dll \
+    #       --dll ruby_builtin_dlls/libcrypto-3-x64.dll
     - name: Show ocran build output
-      run: ls *.exe
-    - name: Run ocran build output
-      run: .\pact-broker.exe
-    - name: Upload pact-broker-win-x64
+      run: ls pkg
+    # - name: Run ocran build output
+    #   run: .\pact-broker.exe
+    - name: Upload pact-
       uses: actions/upload-artifact@v3
       with:
-        name: pact-broker-win-x64
-        path: pact-broker.exe
+        name: pact
+        path: pkg

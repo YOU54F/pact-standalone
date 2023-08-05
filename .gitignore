@@ -35,3 +35,5 @@ pact-cli/
 pact-slim/
 pact-rust/
 .DS_Store
+
+*.exe
