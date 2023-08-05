@@ -18,5 +18,5 @@ gzip -c pact-mock-service.exe > ../pkg/pact-mock-service.exe.gz
 gzip -c pact-provider-verifier.exe > ../pkg/pact-provider-verifier.exe.gz
 gzip -c pact-stub-service.exe > ../pkg/pact-stub-service.exe.gz
 cd ..
-pushd pkg; for file in *.{gz}; do openssl dgst -sha256 -r "$file" > "${file}.sha256"; done; popd;
+pushd pkg; for file in *.gz; do openssl dgst -sha256 -r "$file" > "${file}.sha256"; done; popd;
 cat pkg/*.sha256 > pkg/pact-`cat VERSION`.sha256
