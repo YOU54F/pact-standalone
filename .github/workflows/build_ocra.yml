@@ -17,10 +17,12 @@ jobs:
         ruby-version: 3.2.2
     - name: Set up environment
       run: bundle install
+    - name: Set up environment
+      run: cd packaging && bundle install
     - name: Install ocran
       run: gem install ocran
     - name: Build
-      run: ocran packaging/pact-broker.rb --dll ruby_builtin_dlls/zlib1.dll --dll  ruby_builtin_dlls/libgmp-10.dll --dll ruby_builtin_dlls/libssl-3-x64.dll --dll ruby_builtin_dlls/libyaml-0-2.dll --add-all-core
+      run: ocran packaging/pact-broker.rb --dll ruby_builtin_dlls/zlib1.dll --dll ruby_builtin_dlls/libgmp-10.dll --dll ruby_builtin_dlls/libssl-3-x64.dll --dll ruby_builtin_dlls/libyaml-0-2.dll --add-all-core
     - name: Show ocran build output
       run: ls packaging *.exe
     - name: Run ocran build output
