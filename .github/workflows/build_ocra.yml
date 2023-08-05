@@ -16,7 +16,7 @@ jobs:
       with:
         ruby-version: 3.2.2
     - name: package
-      run: ./scripts/package-with-ocra.sh
+      run: bash script/package-with-ocra.sh
     # - name: Set up environment
     #   run: cd packaging && bundle install
     # - name: Install ocran
