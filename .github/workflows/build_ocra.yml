@@ -1,0 +1,32 @@
+name: Build
+
+on: 
+  push:
+jobs:
+
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-latest"]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.2
+    - name: Set up environment
+      run: bundle install
+    - name: Install ocran
+      run: gem install ocran
+    - name: Build
+      run: ocran packaging/pact-broker.rb --dll ruby_builtin_dlls/zlib1.dll --dll  ruby_builtin_dlls/libgmp-10.dll --dll ruby_builtin_dlls/libssl-3-x64.dll --dll ruby_builtin_dlls/libyaml-0-2.dll --add-all-core
+    - name: Show ocran build output
+      run: ls packaging *.exe
+    - name: Run ocran build output
+      run: .\packaging\pact-broker.exe
+    - name: Upload pact-broker-win-x64
+      uses: actions/upload-artifact@v3
+      with:
+        name: pact-broker-win-x64
+        path: packaging/pact-broker.exe
