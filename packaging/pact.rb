@@ -1,4 +1,3 @@
-$:.unshift File.dirname($0)
 require 'pact/cli'
 
 class Thor

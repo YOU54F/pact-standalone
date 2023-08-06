@@ -1,2 +1,2 @@
-$LOAD_PATH.unshift File.dirname($0)
+$:.unshift File.dirname($0)
 load Gem.bin_path("puma", "puma")
