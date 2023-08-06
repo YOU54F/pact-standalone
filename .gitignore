@@ -37,3 +37,4 @@ pact-rust/
 .DS_Store
 
 *.exe
+*.sqlite3
