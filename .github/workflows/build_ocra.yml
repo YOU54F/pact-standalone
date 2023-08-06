@@ -58,6 +58,8 @@ jobs:
     - name: test ${{ matrix.os }} package
       run: |
         ls pact
+        cd pact
         gunzip pact.gz
+        ls
         gunzip pact-broker-cli.exe.gz
         .\pact-broker-cli.exe
