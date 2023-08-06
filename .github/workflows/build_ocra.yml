@@ -38,7 +38,7 @@ jobs:
     - name: Show ocran build output
       run: ls pkg
     - name: Run ocran build output
-      run: .\pact-broker-cli.exe
+      run: .\packaging\pact-broker-cli.exe
     - name: Upload pact-
       uses: actions/upload-artifact@v3
       with:
