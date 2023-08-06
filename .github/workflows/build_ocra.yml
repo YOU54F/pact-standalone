@@ -58,6 +58,8 @@ jobs:
     - run: ls pact
     - run: cd pact
     - run: gunzip pact.gz
+    - run: ls pact
+    - run: gunzip pact\pact-broker-cli.exe.gz
+    - run: ls pact
     - run: ls
-    - run: gunzip pact-broker-cli.exe.gz
-    - run: .\pact-broker-cli.exe
+    - run: .\pact\pact-broker-cli.exe
