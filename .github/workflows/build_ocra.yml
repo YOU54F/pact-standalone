@@ -55,11 +55,13 @@ jobs:
     - uses: actions/checkout@v3
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v3
-    - run: ls pact
-    - run: cd pact
-    - run: gunzip pact.gz
-    - run: ls pact
-    - run: gunzip pact\pact-broker-cli.exe.gz
-    - run: ls pact
-    - run: ls
-    - run: .\pact\pact-broker-cli.exe
+    - run: |
+        ls pact
+        cd pact
+        gunzip pact.gz
+        ls pact
+        gunzip pact\\pact-broker-cli.exe.gz
+        ls pact
+        ls
+        .\\pact\\pact-broker-cli.exe
+      shell: bash

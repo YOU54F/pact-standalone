@@ -4,6 +4,7 @@ set -e
 gem install ocran
 mkdir -p pkg
 cd packaging
+unset GEM_HOME
 bundle install
 
 # ocran pact-broker-app.rb config.ru ca-bundle.crt config \
