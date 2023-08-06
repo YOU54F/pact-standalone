@@ -60,3 +60,4 @@ jobs:
         ls pact
         gunzip pact.gz
         gunzip pact-broker-cli.exe
+        .\pact-broker-cli.exe

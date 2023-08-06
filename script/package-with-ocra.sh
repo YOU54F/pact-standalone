@@ -31,7 +31,7 @@ ocran pact-broker.rb ca-bundle.crt --verbose --output pact-broker-cli.exe \
     --dll ruby_builtin_dlls/libcrypto-3-x64.dll
 
 gzip -c pact-broker-cli.exe > ../pkg/pact-broker-cli.exe.gz
-# pact-broker-cli.exe
+pact-broker-cli.exe
 # ocran pact.rb ca-bundle.crt --verbose --output pact-cli.exe \
 #     --gem-all \
 #     --add-all-core \
