@@ -60,5 +60,5 @@ jobs:
         cd pact
         gunzip pact-broker-cli.exe.gz
         ls
-        .\pact-broker-cli.exe
+        .\\pact-broker-cli.exe
       shell: bash
