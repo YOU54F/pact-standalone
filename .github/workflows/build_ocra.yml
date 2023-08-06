@@ -57,6 +57,6 @@ jobs:
       uses: actions/download-artifact@v3
     - name: test ${{ matrix.os }} package
       run: |
-        ls pkg
-        gunzip pkg/pact-.gz
-        ls pkg
+        ls pact
+        gunzip pact.gz
+        ls
