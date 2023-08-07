@@ -63,4 +63,25 @@ jobs:
         ls
       shell: bash
     - run: .\\pact\\pact-broker-cli.exe
-    - run: .\\pact\\pact-broker-app.exe
+    - run: |
+        iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+        "$HOME\scoop\shims\" >> $env:GITHUB_PATH
+      name: install scoop
+      shell: powershell
+      if: runner.os == 'windows'
+    - run: curl -LO https://raw.githubusercontent.com/pact-foundation/pact-5-minute-getting-started-guide/main/pacts/GettingStartedOrderWeb-GettingStartedOrderApi.json
+    - run: |
+        nohup \\pact\\pact-broker-app.exe >& nohup.out &
+        echo $! > $HOME/pid.nohup
+      shell: bash
+    - run: |
+        scoop install wget
+        scoop install netcat
+    - name: Wait for the pact broker to start
+      run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/$WAIT_FOR_VERSION/wait-for | sh -s -- localhost:9292 -- echo "pact broker is up"
+      env:
+        WAIT_FOR_VERSION: 4df3f9262d84cab0039c07bf861045fbb3c20ab7 # v2.2.3
+      shell: bash
+    - run: \\pact\\pact-broker-cli.exe publish --broker-base-url http://localhost:9292 -a 1.0.0 ..\\GettingStartedOrderWeb-GettingStartedOrderApi.json
+    - run: kill `cat $HOME/pid.nohup`
+      shell: bash
