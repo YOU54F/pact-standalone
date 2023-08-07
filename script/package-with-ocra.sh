@@ -19,7 +19,6 @@ ocran pact-broker-app.rb config.ru ca-bundle.crt config \
     --dll ruby_builtin_dlls/libcrypto-3-x64.dll \
     --no-dep-run \
     --gemfile Gemfile \
-    --gem-full=sucker_punch \
     --chdir-first
 gzip -c pact-broker-app.exe > ../pkg/pact-broker-app.exe.gz
 
