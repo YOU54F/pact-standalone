@@ -8,3 +8,11 @@ gem "pact_broker-client", "1.68.0"
 gem "webrick", "1.8.1"
 gem 'rack', '>= 2.2.6'
 gem "json", "2.6.3"
+# gem 'ffi'
+# gem 'pact-ffi'
+# gem "sucker_punch", git: "https://github.com/pact-foundation/sucker_punch.git", ref: "fix/rename-is-singleton-class-method-2"
+gem 'pact_broker'
+gem 'pg'
+gem 'puma'
+gem "sqlite3"
+gem 'nokogiri'

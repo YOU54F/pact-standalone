@@ -1,0 +1,87 @@
+name: Build
+
+on: 
+  push:
+jobs:
+
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-latest"]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.2
+    - name: package
+      run: bash script/package-with-ocra.sh
+    # - name: Set up environment
+    #   run: cd packaging && bundle install
+    # - name: Install ocran
+    #   run: gem install ocran
+    # - name: Build
+    #   run: |
+    #     ocran pact-broker.rb \
+    #       ca-bundle.crt \
+    #       --verbose \
+    #       --output pact-broker-cli.exe \
+    #       --gem-all \
+    #       --add-all-core \
+    #       --gem-full=openssl \
+    #       --dll ruby_builtin_dlls/zlib1.dll \
+    #       --dll ruby_builtin_dlls/libgmp-10.dll \
+    #       --dll ruby_builtin_dlls/libyaml-0-2.dll \
+    #       --dll ruby_builtin_dlls/libssl-3-x64.dll \
+    #       --dll ruby_builtin_dlls/libcrypto-3-x64.dll
+    - name: Show ocran build output
+      run: ls pkg
+    - name: Run ocran build output
+      run: .\packaging\pact-broker-cli.exe
+    - name: Upload pact-
+      uses: actions/upload-artifact@v3
+      with:
+        name: pact
+        path: pkg
+  test:
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-latest"]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v3
+    - run: |
+        ls pact
+        cd pact
+        gunzip pact-broker-cli.exe.gz
+        gunzip pact-broker-app.exe.gz
+        ls
+      shell: bash
+    - run: .\\pact\\pact-broker-cli.exe
+    - run: |
+        iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+        "$HOME\scoop\shims\" >> $env:GITHUB_PATH
+      name: install scoop
+      shell: powershell
+      if: runner.os == 'windows'
+    - run: curl -LO https://raw.githubusercontent.com/pact-foundation/pact-5-minute-getting-started-guide/main/pacts/GettingStartedOrderWeb-GettingStartedOrderApi.json
+    - run: |
+        nohup \\pact\\pact-broker-app.exe >& nohup.out &
+        echo $! > $HOME/pid.nohup
+      shell: bash
+    - run: |
+        scoop install wget
+        scoop install netcat
+    - name: Wait for the pact broker to start
+      run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/$WAIT_FOR_VERSION/wait-for | sh -s -- localhost:9292 -- echo "pact broker is up"
+      env:
+        WAIT_FOR_VERSION: 4df3f9262d84cab0039c07bf861045fbb3c20ab7 # v2.2.3
+      shell: bash
+    - run: \\pact\\pact-broker-cli.exe publish --broker-base-url http://localhost:9292 -a 1.0.0 ..\\GettingStartedOrderWeb-GettingStartedOrderApi.json
+    - run: kill `cat $HOME/pid.nohup`
+      shell: bash
