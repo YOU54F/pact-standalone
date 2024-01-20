@@ -22,7 +22,7 @@ builder_linux_arm_task:
     BINARY_ARCH: arm64
     PATH: "$HOME/.rbenv/bin:/root/.rbenv/shims:$PATH"
   arm_container:
-    image: ruby:3.2.2-slim
+    image: ruby:3.3.0-slim
   pre_req_script:
       apt update --yes && apt install --yes zip curl
   << : *BUILD_TEST_TASK_TEMPLATE
@@ -35,17 +35,17 @@ builder_macos_arm_task:
     BINARY_OS: osx
     BINARY_ARCH: arm64
   ## If you need to install Ruby from source
-  ## the image comes with 3.2.2 preinstalled
+  ## the image comes with 3.3.0 preinstalled
   # install_ruby_script: 
   #   - |
   #     brew unlink openssl && brew link --force openssl
-  #     wget https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.2.2.tar.gz
-  #     tar xf ruby-3.2.2.tar.gz
-  #     cd ruby-3.2.2
-  #     ./configure --prefix=/Users/$USER/.rbenv/versions/3.2.2
+  #     wget https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.3.0.tar.gz
+  #     tar xf ruby-3.3.0.tar.gz
+  #     cd ruby-3.3.0
+  #     ./configure --prefix=/Users/$USER/.rbenv/versions/3.3.0
   #     make -j9
   #     make install
-  #   - rbenv global 3.2.2
+  #   - rbenv global 3.3.0
   ruby_version_script: ruby --version
   << : *BUILD_TEST_TASK_TEMPLATE
   binary_artifacts:
@@ -70,10 +70,10 @@ builder_macos_arm_task:
 # - debian x64
 
 # It also tests a combination of common Docker images
-# - IMAGE: ruby:3.2.2-alpine
+# - IMAGE: ruby:3.3.0-alpine
 # - IMAGE: node:20-alpine
 # - IMAGE: golang:1.20.2-alpine
-# - IMAGE: ruby:3.2.2-slim
+# - IMAGE: ruby:3.3.0-slim
 # - IMAGE: node:20-slim
 # - IMAGE: golang:1.20.2
 
@@ -157,7 +157,7 @@ cli_test_debian_arm_task:
   only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_PR != ''
   env:
     matrix:
-      - IMAGE: ruby:3.2.2-slim
+      - IMAGE: ruby:3.3.0-slim
       - IMAGE: node:20-slim
       - IMAGE: golang:1.20.2
   arm_container:
@@ -172,7 +172,7 @@ cli_test_alpine_arm_task:
   only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_PR != ''
   env:
     matrix:
-      - IMAGE: ruby:3.2.2-alpine
+      - IMAGE: ruby:3.3.0-alpine
       - IMAGE: node:20-alpine
       - IMAGE: golang:1.20.2-alpine
   arm_container:
@@ -187,7 +187,7 @@ cli_test_debian_task:
   only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_PR != ''
   env:
     matrix:
-      - IMAGE: ruby:3.2.2-slim
+      - IMAGE: ruby:3.3.0-slim
       - IMAGE: node:20-slim
       - IMAGE: golang:1.20.2
   container:
@@ -202,7 +202,7 @@ cli_test_alpine_task:
   only_if: $CIRRUS_BRANCH == 'master' || $CIRRUS_PR != ''
   env:
     matrix:
-      - IMAGE: ruby:3.2.2-alpine
+      - IMAGE: ruby:3.3.0-alpine
       - IMAGE: node:20-alpine
       - IMAGE: golang:1.20.2-alpine
   container:
