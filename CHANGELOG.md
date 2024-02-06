@@ -1,3 +1,12 @@
+<a name="v2.5.0"></a>
+### v2.5.0 (2024-01-22)
+
+
+#### Features
+
+* remove unused gemfile.lock files	 ([d03a452](/../../commit/d03a452))
+
+
 <a name="v2.4.0"></a>
 <a name="v2.1.0"></a>
 ### v2.1.0 (2024-01-22)
