@@ -3,7 +3,7 @@ require 'bundler/setup'
 
 PACKAGE_NAME = "pact"
 VERSION = File.read('VERSION').strip
-TRAVELING_RUBY_VERSION = "20240116-3.3.0"
+TRAVELING_RUBY_VERSION = "20240205-3.3.0"
 TRAVELING_RUBY_PKG_DATE = TRAVELING_RUBY_VERSION.split("-").first
 PLUGIN_CLI_VERSION = "0.1.0"
 
@@ -199,6 +199,9 @@ def remove_unnecessary_files package_dir
   sh "find #{package_dir}/lib/vendor/ruby -name '*.html' | xargs rm -f"
   sh "find #{package_dir}/lib/vendor/ruby -name '*.css' | xargs rm -f"
   sh "find #{package_dir}/lib/vendor/ruby -name '*.svg' | xargs rm -f"
+
+  # Remove unused Gemfile.lock files
+  sh "find #{package_dir}/lib/vendor/ruby -name 'Gemfile.lock' | xargs rm -f"
 
   # Uncommonly used encodings
   sh "rm -f #{package_dir}/lib/ruby/lib/ruby/*/*/enc/cp949*"
