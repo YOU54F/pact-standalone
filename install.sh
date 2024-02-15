@@ -15,8 +15,25 @@ if [ "$tag" ]; then
   PACT_CLI_VERSION="$tag"
 fi
 
+if command -v curl >/dev/null 2>&1; then
+  downloader="curl -sLO"
+elif command -v wget >/dev/null 2>&1; then
+  downloader="wget -q"
+else
+  echo "Sorry, you need either curl or wget installed to proceed with the installation."
+  exit 1
+fi
+
 if [ -z "$PACT_CLI_VERSION" ]; then
-  PACT_CLI_VERSION=$(basename "$(curl -fs -o/dev/null -w "%{redirect_url}" https://github.com/you54f/pact-ruby-standalone/releases/latest)")
+  if command -v curl >/dev/null 2>&1; then
+    PACT_CLI_VERSION=$(basename "$(curl -fs -o/dev/null -w "%{redirect_url}" https://github.com/you54f/pact-ruby-standalone/releases/latest)")
+  elif command -v wget >/dev/null 2>&1; then
+    PACT_CLI_VERSION=$(basename "$(wget -q -S -O /dev/null https://github.com/you54f/pact-ruby-standalone/releases/latest 2>&1 | grep -i "Location:" | awk '{print $2}')")
+  else
+    echo "Sorry, you need set a version number PACT_CLI_VERSION as we can't determine the latest at this time. See https://github.com/you54f/pact-ruby-standalone/releases/latest."
+    exit 1
+  fi
+
   echo "Thanks for downloading the latest release of pact-ruby-standalone $PACT_CLI_VERSION."
   echo "-----"
   echo "Note:"
@@ -106,7 +123,7 @@ esac
 echo "-------------"
 echo "Downloading:"
 echo "-------------"
-(curl -sLO https://github.com/you54f/pact-ruby-standalone/releases/download/"${PACT_CLI_VERSION}"/"${filename}" && echo downloaded "${filename}") || (echo "Sorry, you'll need to install the pact-ruby-standalone manually." && exit 1)
+($downloader https://github.com/you54f/pact-ruby-standalone/releases/download/"${PACT_CLI_VERSION}"/"${filename}" && echo downloaded "${filename}") || (echo "Sorry, you'll need to install the pact-ruby-standalone manually." && exit 1)
 case $os in
 'windows'* | 'win32')
   (unzip "${filename}" && echo unarchived "${filename}") || (echo "Sorry, you'll need to unarchived the pact-ruby-standalone manually." && exit 1)
