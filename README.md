@@ -6,7 +6,7 @@ Creates a standalone pact command line executable using the ruby pact implementa
 
 ## Package contents
 
-This version (2.4.1) of the Pact standalone executables package contains:
+This version (2.5.1-rc1) of the Pact standalone executables package contains:
 
   * pact gem 1.64.0
   * pact-mock_service gem 3.11.2
@@ -48,17 +48,15 @@ See the [release page][releases].
 
 Ruby is not required on the host platform, Ruby 3.2.3 is provided in the distributable.
 
-| OS            | Ruby      | Architecture   | Supported |
-| -------       | -------   | ------------   | --------- |
-| MacOS         | 3.2.3     | x86_64         | ✅        | Catalina and later
-| MacOS         | 3.2.3     | aarch64 (arm64)| ✅        | Big Sur and later
-| Linux         | 3.2.3     | x86_64         | ✅        | GLIBC 2.19 and later
-| Linux         | 3.2.3     | aarch64 (arm64)| ✅        | GLIBC 2.19 and later
-| Linux Alpine  | 3.2.3     | x86_64         | ✅        | Alpine 3.15 and later
-| Linux Alpine  | 3.2.3     | aarch64 (arm64)| ✅        | Alpine 3.15 and later
-| Windows       | 3.2.3     | x86_64         | ✅        |
-| Windows       | 3.2.3     | x86            | ✅        |
-| Windows       | 3.2.3     | aarch64 (arm64)| 🚧        |
+| OS     | Ruby      | Architecture   | Supported |
+| -------| -------   | ------------   | --------- |
+| MacOS  | 3.2.3     | x86_64         | ✅        |
+| MacOS  | 3.2.3     | aarch64 (arm64)| ✅        |
+| Linux  | 3.2.3     | x86_64         | ✅        |
+| Linux  | 3.2.3     | aarch64 (arm64)| ✅        |
+| Windows| 3.2.3     | x86_64         | ✅        |
+| Windows| 3.2.3     | x86            | ✅        |
+| Windows| 3.2.3     | aarch64 (arm64)| 🚧        |
 
 🚧 - Tested under emulation mode x86 / x86_64 in Windows on ARM
 
