@@ -37,7 +37,7 @@ case $(uname -sm) in
         ldd_output=$(ldd /bin/ls)
         case "$ldd_output" in
             *musl*) 
-                os='linux-x86_64-musl'
+                os='linux-musl-x86_64'
                 ;;
             *) 
                 os='linux-x86_64'
@@ -56,7 +56,7 @@ case $(uname -sm) in
         ldd_output=$(ldd /bin/ls)
         case "$ldd_output" in
             *musl*) 
-                os='linux-arm64-musl'
+                os='linux-musl-arm64'
                 ;;
             *) 
                 os='linux-arm64'
