@@ -3,7 +3,7 @@ FROM arm64v8/alpine
 # COPY install.sh /install.sh
 # RUN chmod +x /install.sh && /install.sh && ln -s /pact/bin/* /usr/local/bin
 
-RUN curl -fsSL https://raw.githubusercontent.com/you54f/pact-ruby-standalone/master/install.sh | sh \
-     && ln -s /pact/bin/* /usr/local/bin
+RUN wget -q https://raw.githubusercontent.com/you54f/pact-ruby-standalone/master/install.sh -O- | sh \
+     && ln -s /pact/bin/* /usr/local/bin && ls /pact
 
 ENTRYPOINT ["pact-mock-service"]
