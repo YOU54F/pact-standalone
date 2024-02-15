@@ -1,14 +1,14 @@
 #!/bin/sh -e
 ## Tested with https://www.shellcheck.net/
 # Usage: (install latest)
-#   $ curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | sh
+#   $ curl -fsSL https://raw.githubusercontent.com/you54f/pact-ruby-standalone/master/install.sh | sh
 # or
-#   $ wget -q https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh -O- | sh
+#   $ wget -q https://raw.githubusercontent.com/you54f/pact-ruby-standalone/master/install.sh -O- | sh
 #
 # Usage: (install fixed version) - pass PACT_CLI_VERSION=v<PACT_CLI_VERSION> eg PACT_CLI_VERSION=v1.92.0 or set as an env var
-#   $ curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | PACT_CLI_VERSION=v1.92.0 sh
+#   $ curl -fsSL https://raw.githubusercontent.com/you54f/pact-ruby-standalone/master/install.sh | PACT_CLI_VERSION=v1.92.0 sh
 # or
-#   $ wget -q https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh -O- | PACT_CLI_VERSION=v1.92.0 sh
+#   $ wget -q https://raw.githubusercontent.com/you54f/pact-ruby-standalone/master/install.sh -O- | PACT_CLI_VERSION=v1.92.0 sh
 #
 if [ "$tag" ]; then
   echo "setting $tag as PACT_CLI_VERSION for legacy reasons"
@@ -16,14 +16,14 @@ if [ "$tag" ]; then
 fi
 
 if [ -z "$PACT_CLI_VERSION" ]; then
-  PACT_CLI_VERSION=$(basename "$(curl -fs -o/dev/null -w "%{redirect_url}" https://github.com/pact-foundation/pact-ruby-standalone/releases/latest)")
+  PACT_CLI_VERSION=$(basename "$(curl -fs -o/dev/null -w "%{redirect_url}" https://github.com/you54f/pact-ruby-standalone/releases/latest)")
   echo "Thanks for downloading the latest release of pact-ruby-standalone $PACT_CLI_VERSION."
   echo "-----"
   echo "Note:"
   echo "-----"
   echo "You can download a fixed version by setting the PACT_CLI_VERSION environment variable eg PACT_CLI_VERSION=v1.92.0"
   echo "example:"
-  echo "curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-ruby-standalone/master/install.sh | PACT_CLI_VERSION=v1.92.0 sh"
+  echo "curl -fsSL https://raw.githubusercontent.com/you54f/pact-ruby-standalone/master/install.sh | PACT_CLI_VERSION=v1.92.0 sh"
 else
   echo "Thanks for downloading pact-ruby-standalone $PACT_CLI_VERSION."
 fi
@@ -33,14 +33,38 @@ MAJOR_PACT_CLI_VERSION=$(echo "$PACT_CLI_VERSION_WITHOUT_V" | cut -d '.' -f 1)
 
 case $(uname -sm) in
 'Linux x86_64')
-  os='linux-x86_64'
+    if ldd /bin/ls >/dev/null 2>&1; then
+        ldd_output=$(ldd /bin/ls)
+        case "$ldd_output" in
+            *musl*) 
+                os='linux-x86_64-musl'
+                ;;
+            *) 
+                os='linux-x86_64'
+                ;;
+        esac
+    else
+      os='linux-x86_64'
+    fi
   ;;
 'Linux aarch64')
   if [ "$MAJOR_PACT_CLI_VERSION" -lt 2 ]; then
     echo "Sorry, you'll need to install the pact-ruby-standalone manually."
     exit 1
   else
-    os='linux-arm64'
+    if ldd /bin/ls >/dev/null 2>&1; then
+        ldd_output=$(ldd /bin/ls)
+        case "$ldd_output" in
+            *musl*) 
+                os='linux-arm64-musl'
+                ;;
+            *) 
+                os='linux-arm64'
+                ;;
+        esac
+    else
+      os='linux-arm64'
+    fi
   fi
   ;;
 'Darwin arm64')
@@ -82,7 +106,7 @@ esac
 echo "-------------"
 echo "Downloading:"
 echo "-------------"
-(curl -sLO https://github.com/pact-foundation/pact-ruby-standalone/releases/download/"${PACT_CLI_VERSION}"/"${filename}" && echo downloaded "${filename}") || (echo "Sorry, you'll need to install the pact-ruby-standalone manually." && exit 1)
+(curl -sLO https://github.com/you54f/pact-ruby-standalone/releases/download/"${PACT_CLI_VERSION}"/"${filename}" && echo downloaded "${filename}") || (echo "Sorry, you'll need to install the pact-ruby-standalone manually." && exit 1)
 case $os in
 'windows'* | 'win32')
   (unzip "${filename}" && echo unarchived "${filename}") || (echo "Sorry, you'll need to unarchived the pact-ruby-standalone manually." && exit 1)

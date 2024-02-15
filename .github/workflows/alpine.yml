@@ -1,0 +1,37 @@
+name: Build
+
+on: [pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest']
+        alpine-version: ['3.19', '3.18', '3.17', '3.16', '3.15']
+        arch: ['arm64', 'amd64']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.3
+      - name: Set up QEMU
+        if: matrix.arch == 'arm64'
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        if: matrix.arch == 'arm64'
+        uses: docker/setup-buildx-action@v3
+      - name: Set up environment
+        run: bundle install
+      - name: Build
+        if: matrix.arch == 'arm64'
+        run: bundle exec rake package:linux:musl:arm64
+      - name: Build
+        if: matrix.arch == 'amd64'
+        run: bundle exec rake package:linux:musl:x86_64
+      - run: cd pkg && tar -xvf *.tar.gz
+      - name: check a pact binary
+        run: docker run --platform=linux/${{ matrix.arch }} --rm -v $(pwd)/pkg:/pkg alpine:${{ matrix.alpine-version }} /pkg/pact/bin/pact-mock-service --help
+      - name: check ruby version
+        run: docker run --platform=linux/${{ matrix.arch }}  --rm -v $(pwd)/pkg:/pkg alpine:${{ matrix.alpine-version }} /pkg/pact/lib/ruby/bin/ruby -v

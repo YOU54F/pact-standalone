@@ -1,98 +1,127 @@
 # For Bundler.with_unbundled_env
 require 'bundler/setup'
 
-PACKAGE_NAME = "pact"
+PACKAGE_NAME = 'pact'
 VERSION = File.read('VERSION').strip
-TRAVELING_RUBY_VERSION = "20240205-3.2.3"
-TRAVELING_RUBY_PKG_DATE = TRAVELING_RUBY_VERSION.split("-").first
-PLUGIN_CLI_VERSION = "0.1.0"
+TRAVELING_RUBY_VERSION = '20240215-3.2.3'
+TRAVELING_RUBY_PKG_DATE = TRAVELING_RUBY_VERSION.split('-').first
+PLUGIN_CLI_VERSION = '0.1.3'
 
-desc "Package pact-ruby-standalone for OSX, Linux x86_64 and windows x86_64"
-task :package => ['package:linux:x86_64','package:linux:arm64', 'package:osx:x86_64', 'package:osx:arm64','package:windows:x86_64','package:windows:x86']
+desc 'Package pact-ruby-standalone for OSX, Linux x86_64 and windows x86_64'
+task package: [
+  'package:linux:x86_64',
+  'package:linux:arm64',
+  'package:linux:musl:x86_64',
+  'package:linux:musl:arm64',
+  'package:osx:x86_64',
+  'package:osx:arm64',
+  'package:windows:x86_64',
+  'package:windows:x86'
+]
 
 namespace :package do
   namespace :linux do
-    desc "Package pact-ruby-standalone for Linux x86_64"
-    task :x86_64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-x86_64.tar.gz"] do
-      create_package(TRAVELING_RUBY_VERSION, "linux-x86_64", "linux-x86_64", :unix)
+
+    desc 'Package pact-ruby-standalone for Linux x86_64'
+    task x86_64: [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-x86_64.tar.gz"] do
+      create_package(TRAVELING_RUBY_VERSION, 'linux-x86_64', 'linux-x86_64', :unix)
     end
 
-    desc "Package pact-ruby-standalone for Linux arm64"
-    task :arm64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-arm64.tar.gz"] do
-      create_package(TRAVELING_RUBY_VERSION, "linux-arm64", "linux-arm64", :unix)
+    desc 'Package pact-ruby-standalone for Linux arm64'
+    task arm64: [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-arm64.tar.gz"] do
+      create_package(TRAVELING_RUBY_VERSION, 'linux-arm64', 'linux-arm64', :unix)
+    end
+    namespace :musl do
+      desc 'Package pact-ruby-standalone for Linux-musl x86_64'
+      task x86_64: [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-musl-x86_64.tar.gz"] do
+        create_package(TRAVELING_RUBY_VERSION, 'linux-musl-x86_64', 'linux-musl-x86_64', :unix)
+      end
+  
+      desc 'Package pact-ruby-standalone for Linux-musl arm64'
+      task arm64: [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-musl-arm64.tar.gz"] do
+        create_package(TRAVELING_RUBY_VERSION, 'linux-musl-arm64', 'linux-musl-arm64', :unix)
+      end
     end
   end
 
   namespace :osx do
-  desc "Package pact-ruby-standalone for OS X x86_64"
-  task :x86_64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-x86_64.tar.gz"] do
-    create_package(TRAVELING_RUBY_VERSION, "osx-x86_64", "osx-x86_64", :unix)
-  end
+    desc 'Package pact-ruby-standalone for OS X x86_64'
+    task x86_64: [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-x86_64.tar.gz"] do
+      create_package(TRAVELING_RUBY_VERSION, 'osx-x86_64', 'osx-x86_64', :unix)
+    end
 
-  desc "Package pact-ruby-standalone for OS X arm64"
-  task :arm64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-arm64.tar.gz"] do
-    create_package(TRAVELING_RUBY_VERSION, "osx-arm64", "osx-arm64", :unix)
-  end
+    desc 'Package pact-ruby-standalone for OS X arm64'
+    task arm64: [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-arm64.tar.gz"] do
+      create_package(TRAVELING_RUBY_VERSION, 'osx-arm64', 'osx-arm64', :unix)
+    end
   end
   namespace :windows do
-    desc "Package pact-ruby-standalone for windows x86_64"
-    task :x86_64 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86_64.tar.gz"] do
-      create_package(TRAVELING_RUBY_VERSION, "windows-x86_64", "windows-x86_64", :windows)
+    desc 'Package pact-ruby-standalone for windows x86_64'
+    task x86_64: [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86_64.tar.gz"] do
+      create_package(TRAVELING_RUBY_VERSION, 'windows-x86_64', 'windows-x86_64', :windows)
     end
-    desc "Package pact-ruby-standalone for windows x86"
-    task :x86 => [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86.tar.gz"] do
-      create_package(TRAVELING_RUBY_VERSION, "windows-x86", "windows-x86", :windows)
+    desc 'Package pact-ruby-standalone for windows x86'
+    task x86: [:bundle_install, "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86.tar.gz"] do
+      create_package(TRAVELING_RUBY_VERSION, 'windows-x86', 'windows-x86', :windows)
     end
   end
-  desc "Install gems to local directory"
+  desc 'Install gems to local directory'
   task :bundle_install do
     if RUBY_VERSION !~ /^3\.2\./
       abort "You can only 'bundle install' using Ruby 3.2.3, because that's what Traveling Ruby uses."
     end
-    sh "rm -rf build/tmp"
-    sh "mkdir -p build/tmp"
-    sh "cp packaging/Gemfile packaging/Gemfile.lock build/tmp/"
-    sh "mkdir -p build/tmp/lib/pact/mock_service"
+    sh 'rm -rf build/tmp'
+    sh 'mkdir -p build/tmp'
+    sh 'cp packaging/Gemfile packaging/Gemfile.lock build/tmp/'
+    sh 'mkdir -p build/tmp/lib/pact/mock_service'
     # sh "cp lib/pact/mock_service/version.rb build/tmp/lib/pact/mock_service/version.rb"
     Bundler.with_unbundled_env do
       sh "cd build/tmp && env bundle lock --add-platform x64-mingw32 && bundle config set --local path '../vendor' && env BUNDLE_DEPLOYMENT=true bundle install"
       generate_readme
     end
-    sh "rm -rf build/tmp"
-    sh "rm -rf build/vendor/*/*/cache/*"
+    sh 'rm -rf build/tmp'
+    sh 'rm -rf build/vendor/*/*/cache/*'
   end
 
   task :generate_readme do
     Bundler.with_unbundled_env do
-      sh "mkdir -p build/tmp"
-      sh "cp packaging/Gemfile packaging/Gemfile.lock build/tmp/"
-      sh "cd build/tmp && env BUNDLE_IGNORE_CONFIG=1 bundle install --path ../vendor --without development"
+      sh 'mkdir -p build/tmp'
+      sh 'cp packaging/Gemfile packaging/Gemfile.lock build/tmp/'
+      sh 'cd build/tmp && env BUNDLE_IGNORE_CONFIG=1 bundle install --path ../vendor --without development'
       generate_readme
     end
   end
 end
 
 file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-x86_64.tar.gz" do
-  download_runtime(TRAVELING_RUBY_VERSION, "linux-x86_64")
+  download_runtime(TRAVELING_RUBY_VERSION, 'linux-x86_64')
 end
 
 file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-arm64.tar.gz" do
-  download_runtime(TRAVELING_RUBY_VERSION, "linux-arm64")
+  download_runtime(TRAVELING_RUBY_VERSION, 'linux-arm64')
+end
+
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-musl-x86_64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, 'linux-musl-x86_64')
+end
+
+file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-musl-arm64.tar.gz" do
+  download_runtime(TRAVELING_RUBY_VERSION, 'linux-musl-arm64')
 end
 
 file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-x86_64.tar.gz" do
-  download_runtime(TRAVELING_RUBY_VERSION, "osx-x86_64")
+  download_runtime(TRAVELING_RUBY_VERSION, 'osx-x86_64')
 end
 
 file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-arm64.tar.gz" do
-  download_runtime(TRAVELING_RUBY_VERSION, "osx-arm64")
+  download_runtime(TRAVELING_RUBY_VERSION, 'osx-arm64')
 end
 
 file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86_64.tar.gz" do
-  download_runtime(TRAVELING_RUBY_VERSION, "windows-x86_64")
+  download_runtime(TRAVELING_RUBY_VERSION, 'windows-x86_64')
 end
 file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86.tar.gz" do
-  download_runtime(TRAVELING_RUBY_VERSION, "windows-x86")
+  download_runtime(TRAVELING_RUBY_VERSION, 'windows-x86')
 end
 
 def create_package(version, source_target, package_target, os_type)
@@ -113,7 +142,7 @@ def create_package(version, source_target, package_target, os_type)
 
   case os_type
   when :unix
-    Dir.chdir('packaging'){ Dir['pact*.sh'] }.each do | name |
+    Dir.chdir('packaging') { Dir['pact*.sh'] }.each do |name|
       sh "cp packaging/#{name} #{package_dir}/bin/#{name.chomp('.sh')}"
     end
   when :windows
@@ -130,20 +159,20 @@ def create_package(version, source_target, package_target, os_type)
   remove_unnecessary_files package_dir
   install_plugin_cli package_dir, package_target
 
-  if !ENV['DIR_ONLY']
-    sh "mkdir -p pkg"
+  return if ENV['DIR_ONLY']
 
-    if os_type == :unix
-      sh "tar -czf pkg/#{package_name}.tar.gz #{package_dir}"
-    else
-      sh "zip -9rq pkg/#{package_name}.zip #{package_dir}"
-    end
+  sh 'mkdir -p pkg'
 
-    sh "rm -rf #{package_dir}"
+  if os_type == :unix
+    sh "tar -czf pkg/#{package_name}.tar.gz #{package_dir}"
+  else
+    sh "zip -9rq pkg/#{package_name}.zip #{package_dir}"
   end
+
+  sh "rm -rf #{package_dir}"
 end
 
-def remove_unnecessary_files package_dir
+def remove_unnecessary_files(package_dir)
   ## Reduce distribution - https://github.com/phusion/traveling-ruby/blob/master/REDUCING_PACKAGE_SIZE.md
   # Remove tests
   sh "rm -rf #{package_dir}/lib/vendor/ruby/*/gems/*/test"
@@ -217,38 +246,46 @@ def remove_unnecessary_files package_dir
 end
 
 def generate_readme
-  template = File.absolute_path("packaging/README.md.template")
-  script = File.absolute_path("packaging/generate_readme_contents.rb")
+  template = File.absolute_path('packaging/README.md.template')
+  script = File.absolute_path('packaging/generate_readme_contents.rb')
   Bundler.with_unbundled_env do
     sh "cd build/tmp && env VERSION=#{VERSION} bundle exec ruby #{script} #{template} > ../README.md"
   end
 end
 
 def download_runtime(version, target)
-  sh "cd build && curl -L -O --fail " +
-    "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-#{version}-#{target}.tar.gz"
+  sh 'cd build && curl -L -O --fail ' +
+     "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-#{version}-#{target}.tar.gz"
 end
 
 def install_plugin_cli(package_dir, package_target)
   case package_target
-  when "linux-x86_64"
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-x86_64.gz"
+  when 'linux-x86_64'
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-x86_64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
-  when "linux-arm64"
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-aarch64.gz"
+  when 'linux-arm64'
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-aarch64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
-  when "osx-x86_64"
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-x86_64.gz"
+  when 'linux-musl-x86_64'
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-x86_64-musl.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
-  when "osx-arm64"
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-aarch64.gz"
+  when 'linux-musl-arm64'
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-aarch64-musl.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
-  when "windows-x86_64"
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.exe.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-windows-x86_64.exe.gz"
+  when 'osx-x86_64'
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-x86_64.gz"
+    sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
+    sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
+  when 'osx-arm64'
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-aarch64.gz"
+    sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
+    sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
+  when 'windows-x86_64'
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.exe.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-windows-x86_64.exe.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.exe.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli.exe"
   end

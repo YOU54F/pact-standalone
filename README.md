@@ -48,15 +48,17 @@ See the [release page][releases].
 
 Ruby is not required on the host platform, Ruby 3.2.3 is provided in the distributable.
 
-| OS     | Ruby      | Architecture   | Supported |
-| -------| -------   | ------------   | --------- |
-| MacOS  | 3.2.3     | x86_64         | ✅        |
-| MacOS  | 3.2.3     | aarch64 (arm64)| ✅        |
-| Linux  | 3.2.3     | x86_64         | ✅        |
-| Linux  | 3.2.3     | aarch64 (arm64)| ✅        |
-| Windows| 3.2.3     | x86_64         | ✅        |
-| Windows| 3.2.3     | x86            | ✅        |
-| Windows| 3.2.3     | aarch64 (arm64)| 🚧        |
+| OS            | Ruby      | Architecture   | Supported |
+| -------       | -------   | ------------   | --------- |
+| MacOS         | 3.2.3     | x86_64         | ✅        | Catalina and later
+| MacOS         | 3.2.3     | aarch64 (arm64)| ✅        | Big Sur and later
+| Linux         | 3.2.3     | x86_64         | ✅        | GLIBC 2.19 and later
+| Linux         | 3.2.3     | aarch64 (arm64)| ✅        | GLIBC 2.19 and later
+| Linux Alpine  | 3.2.3     | x86_64         | ✅        | Alpine 3.15 and later
+| Linux Alpine  | 3.2.3     | aarch64 (arm64)| ✅        | Alpine 3.15 and later
+| Windows       | 3.2.3     | x86_64         | ✅        |
+| Windows       | 3.2.3     | x86            | ✅        |
+| Windows       | 3.2.3     | aarch64 (arm64)| 🚧        |
 
 🚧 - Tested under emulation mode x86 / x86_64 in Windows on ARM
 
