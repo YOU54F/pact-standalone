@@ -28,20 +28,40 @@ jobs:
   test:
     defaults:
       run:
-        shell: ${{ matrix.shell }}
+        shell: sh
     needs: [build]
     strategy:
       fail-fast: false
       matrix:
-        os: ["windows-latest","ubuntu-latest","macos-latest"]
-        shell: ["sh","bash"]
+        os: ["windows-latest","ubuntu-latest","macos-12"]
+        arch: ["amd64"]
+        alpine: [false]
+        include:
+          - os: "macos-14"
+            arch: "arm64"
+          - os: "ubuntu-latest"
+            arch: "arm64"
+            alpine: true
+          - os: "ubuntu-latest"
+            arch: "amd64"
+            alpine: true
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
+    - name: Set up QEMU
+      if: matrix.arch == 'arm64' && matrix.alpine == true
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      if: matrix.arch == 'arm64' && matrix.alpine == true
+      uses: docker/setup-buildx-action@v3
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v3
     - name: test ${{ matrix.os }} package
+      if: ${{ matrix.alpine == false }}
       run: ./script/unpack-and-test.sh
+    - name: test alpine ${{ matrix.arch }} package
+      if: ${{ matrix.alpine == true }}
+      run: docker run --platform=linux/${{ matrix.arch }} --rm -v $(pwd):/app alpine /bin/sh -c 'apk add --no-cache bash && cd /app && ./script/unpack-and-test.sh'
     - name: test x86 package
       if: ${{ runner.os == 'Windows'}}
       run: ./script/unpack-and-test.sh
