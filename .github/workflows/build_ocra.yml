@@ -1,4 +1,4 @@
-name: Build
+name: Build Windows
 
 on: 
   push:
@@ -70,9 +70,11 @@ jobs:
       shell: powershell
       if: runner.os == 'windows'
     - run: curl -LO https://raw.githubusercontent.com/pact-foundation/pact-5-minute-getting-started-guide/main/pacts/GettingStartedOrderWeb-GettingStartedOrderApi.json
-    - run: |
+    - name: start pact broker
+      run: |
         nohup \\pact\\pact-broker-app.exe >& nohup.out &
         echo $! > $HOME/pid.nohup
+        echo $HOME/pid.nohup
       shell: bash
     - run: |
         scoop install wget
