@@ -19,6 +19,7 @@ aibika pact-broker-app.rb config.ru config \
     --dll ruby_builtin_dlls/libcrypto-3-x64.dll \
     --no-dep-run \
     --gemfile Gemfile \
+    --gem-full \
     --chdir-first
 gzip -c pact-broker-app.exe > ../pkg/pact-broker-app.exe.gz
 # aibika pact-broker.rb ca-bundle.crt --verbose --output pact-broker-cli.exe \
