@@ -72,9 +72,7 @@ jobs:
     - run: curl -LO https://raw.githubusercontent.com/pact-foundation/pact-5-minute-getting-started-guide/main/pacts/GettingStartedOrderWeb-GettingStartedOrderApi.json
     - name: start pact broker
       run: |
-        nohup \\pact\\pact-broker-app.exe >& nohup.out &
-        echo $! > $HOME/pid.nohup
-        echo $HOME/pid.nohup
+        \\pact\\pact-broker-app.exe
       shell: bash
     - run: |
         scoop install wget
