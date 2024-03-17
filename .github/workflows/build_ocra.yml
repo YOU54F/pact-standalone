@@ -37,8 +37,8 @@ jobs:
     #       --dll ruby_builtin_dlls/libcrypto-3-x64.dll
     - name: Show ocran build output
       run: ls pkg
-    - name: Run ocran build output
-      run: .\packaging\pact-broker-app.exe
+    # - name: Run ocran build output
+    #   run: .\packaging\pact-broker-app.exe
       # run: .\packaging\pact-broker-cli.exe
     - name: Upload pact-
       uses: actions/upload-artifact@v3
@@ -59,7 +59,6 @@ jobs:
     - run: |
         ls pact
         cd pact
-        gunzip pact-broker-cli.exe.gz
         gunzip pact-broker-app.exe.gz
         ls
       shell: bash
@@ -83,6 +82,6 @@ jobs:
       env:
         WAIT_FOR_VERSION: 4df3f9262d84cab0039c07bf861045fbb3c20ab7 # v2.2.3
       shell: bash
-    - run: \\pact\\pact-broker-cli.exe publish --broker-base-url http://localhost:9292 -a 1.0.0 ..\\GettingStartedOrderWeb-GettingStartedOrderApi.json
+    # - run: \\pact\\pact-broker-cli.exe publish --broker-base-url http://localhost:9292 -a 1.0.0 ..\\GettingStartedOrderWeb-GettingStartedOrderApi.json
     - run: kill `cat $HOME/pid.nohup`
       shell: bash
