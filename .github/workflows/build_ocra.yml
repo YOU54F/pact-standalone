@@ -74,6 +74,8 @@ jobs:
       run: |
         .\\pact\\pact-broker-app.exe
       shell: bash
+      env:
+        RACK_ENV: production
     - run: |
         scoop install wget
         scoop install netcat
