@@ -63,7 +63,7 @@ jobs:
         gunzip pact-broker-app.exe.gz
         ls
       shell: bash
-    - run: .\\pact\\pact-broker-cli.exe
+    # - run: .\\pact\\pact-broker-cli.exe
     - run: |
         iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
         "$HOME\scoop\shims\" >> $env:GITHUB_PATH

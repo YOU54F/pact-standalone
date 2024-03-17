@@ -21,7 +21,7 @@ aibika pact-broker-app.rb config.ru ca-bundle.crt config \
     --gemfile Gemfile \
     --chdir-first
 gzip -c pact-broker-app.exe > ../pkg/pact-broker-app.exe.gz
-aibika pact-broker.rb ca-bundle.crt --verbose --output pact-broker-cli.exe \
+# aibika pact-broker.rb ca-bundle.crt --verbose --output pact-broker-cli.exe \
 #     --gem-all \
 #     --add-all-core \
 #     --dll ruby_builtin_dlls/zlib1.dll \
