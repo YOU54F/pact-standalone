@@ -62,7 +62,7 @@ jobs:
         gunzip pact-broker-app.exe.gz
         ls
       shell: bash
-    - run: .\\pact\\pact-broker-cli.exe
+    # - run: .\\pact\\pact-broker-cli.exe
     - run: |
         iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
         "$HOME\scoop\shims\" >> $env:GITHUB_PATH
@@ -72,7 +72,7 @@ jobs:
     - run: curl -LO https://raw.githubusercontent.com/pact-foundation/pact-5-minute-getting-started-guide/main/pacts/GettingStartedOrderWeb-GettingStartedOrderApi.json
     - name: start pact broker
       run: |
-        \\pact\\pact-broker-app.exe
+        .\\pact\\pact-broker-app.exe
       shell: bash
     - run: |
         scoop install wget
