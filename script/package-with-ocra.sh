@@ -7,7 +7,7 @@ cd packaging
 unset GEM_HOME
 bundle install
 
-aibika pact-broker-app.rb config.ru ca-bundle.crt config \
+aibika pact-broker-app.rb config.ru config \
     --verbose \
     --output pact-broker-app.exe \
     --gem-all \
