@@ -26,4 +26,4 @@ unset BUNDLE_APP_CONFIG
 export BUNDLE_FROZEN=1
 
 # Run the actual app using the bundled Ruby interpreter, with Bundler activated.
-exec "$LIBDIR/ruby/bin/ruby" -E UTF-8 -rreadline -rbundler/setup -I "$LIBDIR/app/lib" "$LIBDIR/app/pact-broker.rb" "$@"
+exec "$LIBDIR/ruby/bin/ruby" -E UTF-8 -rreadline -rbundler/setup -I "$LIBDIR/app/lib" "$LIBDIR/app/pact-broker-app.rb" "$@"
