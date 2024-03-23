@@ -1,26 +1,24 @@
 #!/bin/bash -e
 set -e
 
-gem install aibika
+gem install ocran
 mkdir -p pkg
 cd packaging
 unset GEM_HOME
 bundle install
 
-aibika pact-broker-app.rb config.ru config \
+ocran pact-broker-app.rb pact-broker-app.bat config.ru config \
     --verbose \
     --output pact-broker-app.exe \
-    --gem-all \
-    --add-all-core \
-    --dll ruby_builtin_dlls/zlib1.dll \
-    --dll ruby_builtin_dlls/libgmp-10.dll \
-    --dll ruby_builtin_dlls/libyaml-0-2.dll \
-    --dll ruby_builtin_dlls/libssl-3-x64.dll \
-    --dll ruby_builtin_dlls/libcrypto-3-x64.dll \
+    --gem-guess \
     --no-dep-run \
+    --debug-extract \
     --gemfile Gemfile \
-    --gem-full \
     --chdir-first
+pact-broker-app.exe >& nohup.out &
+echo $! > $HOME/pid.nohup
+cat $HOME/pid.nohup
+ls
 gzip -c pact-broker-app.exe > ../pkg/pact-broker-app.exe.gz
 # aibika pact-broker.rb ca-bundle.crt --verbose --output pact-broker-cli.exe \
 #     --gem-all \
