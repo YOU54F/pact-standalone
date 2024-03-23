@@ -11,9 +11,16 @@ ocran pact-broker-app.rb pact-broker-app.bat config.ru config \
     --verbose \
     --output pact-broker-app.exe \
     --gem-all \
+    --add-all-core \
+    --dll ruby_builtin_dlls/zlib1.dll \
+    --dll ruby_builtin_dlls/libgmp-10.dll \
+    --dll ruby_builtin_dlls/libyaml-0-2.dll \
+    --dll ruby_builtin_dlls/libssl-3-x64.dll \
+    --dll ruby_builtin_dlls/libcrypto-3-x64.dll \
     --no-dep-run \
-    --debug-extract \
     --gemfile Gemfile \
+    --debug-extract \
+    --gem-full \
     --chdir-first
 pact-broker-app.exe >& nohup.out &
 echo $! > $HOME/pid.nohup
