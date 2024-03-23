@@ -33,7 +33,7 @@ jobs:
     # - uses: actions/checkout@v3
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v3
-    - run: gunzip pact-broker-app.exe.gz
+    - run: cd pact && gunzip pact-broker-app.exe.gz
       shell: bash
     - name: install scoop
       shell: powershell
@@ -69,4 +69,6 @@ jobs:
     - run: ./pact_cli pact-broker list-latest-pact-versions --broker-base-url http://localhost:9292
     - run: kill `cat $HOME/pid.nohup`
       if: always()
+      shell: bash
+    - run: ls && ls pact
       shell: bash
