@@ -11,7 +11,7 @@ set BUNDLE_FROZEN=1
 set RACK_ENV=production
 
 :: Run the actual app using the bundled Ruby interpreter, with Bundler activated.
-@"%RUNNING_PATH%\bin\ruby.exe" "%RUNNING_PATH%\src\pact-broker-app.rb" "%RUNNING_PATH%\src\config.ru" %*
+@"%RUNNING_PATH%\..\bin\ruby.exe" "%RUNNING_PATH%\pact-broker-app.rb" %*
 
 GOTO :EOF
 

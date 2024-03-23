@@ -10,7 +10,7 @@ bundle install
 ocran pact-broker-app.rb pact-broker-app.bat config.ru config \
     --verbose \
     --output pact-broker-app.exe \
-    --gem-guess \
+    --gem-all \
     --no-dep-run \
     --debug-extract \
     --gemfile Gemfile \
@@ -18,8 +18,13 @@ ocran pact-broker-app.rb pact-broker-app.bat config.ru config \
 pact-broker-app.exe >& nohup.out &
 echo $! > $HOME/pid.nohup
 cat $HOME/pid.nohup
+kill `cat $HOME/pid.nohup`
 ls
+ls ocr*.tmp pact-broker-app
+mv pact-broker-app/src/pact-broker-app.bat pact-broker-app/pact-broker-app.bat
+zip -9rq pact-broker-app.zip pact-broker-app
 gzip -c pact-broker-app.exe > ../pkg/pact-broker-app.exe.gz
+
 # aibika pact-broker.rb ca-bundle.crt --verbose --output pact-broker-cli.exe \
 #     --gem-all \
 #     --add-all-core \
