@@ -22,9 +22,9 @@ ocran pact-broker-app.rb pact-broker-app.bat config.ru config \
     --debug-extract \
     --gem-full \
     --chdir-first
-pact-broker-app.exe >& nohup.out &
-echo $! > $HOME/pid.nohup
-cat $HOME/pid.nohup
+# pact-broker-app.exe >& nohup.out &
+# echo $! > $HOME/pid.nohup
+# cat $HOME/pid.nohup
 # kill `cat $HOME/pid.nohup`
 ls
 # ls ocr*.tmp pact-broker-app

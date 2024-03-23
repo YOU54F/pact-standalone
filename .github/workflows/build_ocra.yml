@@ -17,29 +17,6 @@ jobs:
         ruby-version: 3.2.3
     - name: package
       run: bash script/package-with-ocra.sh
-    # - name: Set up environment
-    #   run: cd packaging && bundle install
-    # - name: Install ocran
-    #   run: gem install ocran
-    # - name: Build
-    #   run: |
-    #     ocran pact-broker.rb \
-    #       ca-bundle.crt \
-    #       --verbose \
-    #       --output pact-broker-cli.exe \
-    #       --gem-all \
-    #       --add-all-core \
-    #       --gem-full=openssl \
-    #       --dll ruby_builtin_dlls/zlib1.dll \
-    #       --dll ruby_builtin_dlls/libgmp-10.dll \
-    #       --dll ruby_builtin_dlls/libyaml-0-2.dll \
-    #       --dll ruby_builtin_dlls/libssl-3-x64.dll \
-    #       --dll ruby_builtin_dlls/libcrypto-3-x64.dll
-    - name: Show ocran build output
-      run: ls pkg
-    # - name: Run ocran build output
-    #   run: .\packaging\pact-broker-app.exe
-      # run: .\packaging\pact-broker-cli.exe
     - name: Upload pact-
       uses: actions/upload-artifact@v3
       with:
@@ -53,28 +30,30 @@ jobs:
         os: ["windows-latest"]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
+    # - uses: actions/checkout@v3
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v3
-    - run: |
-        ls pact
-        cd pact
-        gunzip pact-broker-app.exe.gz
-        ls
+    - run: gunzip pact-broker-app.exe.gz
       shell: bash
-    # - run: .\\pact\\pact-broker-cli.exe
-    - run: |
-        iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
-        "$HOME\scoop\shims\" >> $env:GITHUB_PATH
-      name: install scoop
+    - name: install scoop
       shell: powershell
       if: runner.os == 'windows'
-    - run: curl -LO https://raw.githubusercontent.com/pact-foundation/pact-5-minute-getting-started-guide/main/pacts/GettingStartedOrderWeb-GettingStartedOrderApi.json
+      run: |
+        iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+        "$HOME\scoop\shims\" >> $env:GITHUB_PATH
     - name: start pact broker
       run: |
         .\\pact\\pact-broker-app.exe
       shell: bash
-    - run: |
+    - name: 'Start broker'
+      shell: bash  # needs bash for nohup redirect, can we use puma pid function?
+      # shell: pwsh
+      run: |
+        .\\pact\\pact-broker-app.exe >& nohup.out &
+        echo $! > $HOME/pid.nohup
+        cat $HOME/pid.nohup
+    - name: install wget and netcat via scoop
+      run: |
         scoop install wget
         scoop install netcat
     - name: Wait for the pact broker to start
@@ -82,6 +61,12 @@ jobs:
       env:
         WAIT_FOR_VERSION: 4df3f9262d84cab0039c07bf861045fbb3c20ab7 # v2.2.3
       shell: bash
-    # - run: \\pact\\pact-broker-cli.exe publish --broker-base-url http://localhost:9292 -a 1.0.0 ..\\GettingStartedOrderWeb-GettingStartedOrderApi.json
+    - name: Download pact cli (rust)
+      run: |
+        curl -LO https://github.com/YOU54F/hello_cli/releases/download/v0.0.9/pact_cli-x86_64-windows-msvc.exe
+        chmod +x pact_cli-x86_64-windows-msvc.exe
+        mv pact_cli-x86_64-windows-msvc.exe pact_cli.exe
+    - run: ./pact_cli pact-broker list-latest-pact-versions --broker-base-url http://localhost:9292
     - run: kill `cat $HOME/pid.nohup`
+      if: always()
       shell: bash
