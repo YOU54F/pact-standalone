@@ -1,3 +1,12 @@
+<a name="v4.0.0"></a>
+### v4.0.0 (2024-02-15)
+
+
+#### Features
+
+* installer support wget or curl	 ([0cb30da](/../../commit/0cb30da))
+
+
 <a name="v2.4.1"></a>
 ### v2.4.1 (2024-02-12)
 
