@@ -63,7 +63,7 @@ jobs:
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v3
     - name: test ${{ matrix.os }} package
-      if: ${{ matrix.alpine == false }}
+      if: ${{ matrix.docker == false }}
       run: ./script/unpack-and-test.sh
     - name: test alpine ${{ matrix.arch }} package
       if: ${{ matrix.alpine == true }}
