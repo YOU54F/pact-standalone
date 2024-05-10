@@ -1,5 +1,5 @@
-#!/bin/bash -eu
-set -eu # This needs to be here for windows bash, which doesn't read the #! line above
+#!/bin/bash -e
+set -e # This needs to be here for windows bash, which doesn't read the #! line above
 
 detected_os=$(uname -sm)
 echo detected_os = $detected_os
