@@ -6,7 +6,7 @@ echo detected_os = $detected_os
 BINARY_OS=${BINARY_OS:-}
 BINARY_ARCH=${BINARY_ARCH:-}
 FILE_EXT=${FILE_EXT:-}
-
+ALPINE=$(cat /etc/os-release | grep -i alpine || true)
 if [ "$BINARY_OS" == "" ] || [ "$BINARY_ARCH" == "" ] ; then 
     case ${detected_os} in
     'Darwin arm64')
@@ -85,7 +85,7 @@ for tool in ${tools[@]}; do
   if [ "$BINARY_OS" != "windows" ] ; then echo "no bat file ext needed for $(uname -a)" ; else FILE_EXT=.bat; fi
   if [ "$BINARY_OS" = "windows" ] && [ "$tool" = "pact-plugin-cli" ] ; then  FILE_EXT=.exe ; else echo "no exe file ext needed for $(uname -a)"; fi
   echo executing ${tool}${FILE_EXT} 
-  if [ "$BINARY_ARCH" = "x86" ] && [ "$tool" = "pact-plugin-cli" ] ; then  echo "skipping for x86" ; else ${tool}${FILE_EXT} help; fi
+  if [ "$BINARY_ARCH" = "x86" ] && [ "$tool" = "pact-plugin-cli" ] || [ "$ALPINE" = true ] && [ "$tool" = "pact-plugin-cli" ] ; then  echo "skipping for x86" ; else ${tool}${FILE_EXT} help; fi
 done
 
 

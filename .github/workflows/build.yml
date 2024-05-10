@@ -42,17 +42,23 @@ jobs:
           - os: "ubuntu-latest"
             arch: "arm64"
             alpine: true
+            docker: true
           - os: "ubuntu-latest"
             arch: "amd64"
             alpine: true
+            docker: true
+          - os: "ubuntu-latest"
+            arch: "arm64"
+            debian: true
+            docker: true
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up QEMU
-      if: matrix.arch == 'arm64' && matrix.alpine == true
+      if: matrix.arch == 'arm64' && matrix.docker == true
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
-      if: matrix.arch == 'arm64' && matrix.alpine == true
+      if: matrix.arch == 'arm64' && matrix.docker == true
       uses: docker/setup-buildx-action@v3
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v3
@@ -62,6 +68,9 @@ jobs:
     - name: test alpine ${{ matrix.arch }} package
       if: ${{ matrix.alpine == true }}
       run: docker run --platform=linux/${{ matrix.arch }} --rm -v $(pwd):/app alpine /bin/sh -c 'apk add --no-cache bash && cd /app && ./script/unpack-and-test.sh'
+    - name: test alpine ${{ matrix.arch }} package
+      if: ${{ matrix.debian == true }}
+      run: docker run --platform=linux/${{ matrix.arch }} --rm -v $(pwd):/app debian /bin/bash -c 'cd /app && ./script/unpack-and-test.sh'
     - name: test x86 package
       if: ${{ runner.os == 'Windows'}}
       run: ./script/unpack-and-test.sh
