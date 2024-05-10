@@ -6,7 +6,7 @@ echo detected_os = $detected_os
 BINARY_OS=${BINARY_OS:-}
 BINARY_ARCH=${BINARY_ARCH:-}
 FILE_EXT=${FILE_EXT:-}
-ALPINE=$(cat /etc/os-release | grep -i alpine &>/dev/null && echo true || false)
+ALPINE=$(grep -i alpine /etc/os-release &>/dev/null && echo true || echo false)
 if [ "$BINARY_OS" == "" ] || [ "$BINARY_ARCH" == "" ] ; then 
     case ${detected_os} in
     'Darwin arm64')
