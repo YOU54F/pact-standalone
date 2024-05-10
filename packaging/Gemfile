@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem "pact", "1.64.0"
 gem "pact-message", "0.11.1"
@@ -7,4 +7,9 @@ gem "pact-provider-verifier", "1.38.0"
 gem "pact_broker-client", "1.75.1"
 gem "webrick", "1.8.1"
 gem 'rack', '>= 2.2.6'
+
+# ensure these are pinned to stdgems as we don't have native extensions for windows
+# https://stdgems.org/json/
 gem "json", "2.6.3"
+# https://stdgems.org/bigdecimal/
+gem 'bigdecimal', '3.1.3'

@@ -3,9 +3,9 @@ require 'bundler/setup'
 
 PACKAGE_NAME = 'pact'
 VERSION = File.read('VERSION').strip
-TRAVELING_RUBY_VERSION = '20240215-3.2.3'
+TRAVELING_RUBY_VERSION = '20240412-3.2.3'
 TRAVELING_RUBY_PKG_DATE = TRAVELING_RUBY_VERSION.split('-').first
-PLUGIN_CLI_VERSION = '0.1.3'
+PLUGIN_CLI_VERSION = '0.1.0'
 
 desc 'Package pact-ruby-standalone for OSX, Linux x86_64 and windows x86_64'
 task package: [
@@ -261,31 +261,31 @@ end
 def install_plugin_cli(package_dir, package_target)
   case package_target
   when 'linux-x86_64'
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-x86_64.gz"
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-x86_64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
   when 'linux-arm64'
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-aarch64.gz"
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-aarch64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
-  when 'linux-musl-x86_64'
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-x86_64-musl.gz"
-    sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
-    sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
-  when 'linux-musl-arm64'
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-aarch64-musl.gz"
-    sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
-    sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
+  # when 'linux-musl-x86_64'
+  #   sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-x86_64.gz"
+  #   sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
+  #   sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
+  # when 'linux-musl-arm64'
+  #   sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-linux-aarch64.gz"
+  #   sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
+  #   sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
   when 'osx-x86_64'
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-x86_64.gz"
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-x86_64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
   when 'osx-arm64'
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-aarch64.gz"
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-osx-aarch64.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli"
   when 'windows-x86_64'
-    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.exe.gz https://github.com/you54f/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-windows-x86_64.exe.gz"
+    sh "curl -L -o #{package_dir}/bin/pact-plugin-cli.exe.gz https://github.com/pact-foundation/pact-plugins/releases/download/pact-plugin-cli-v#{PLUGIN_CLI_VERSION}/pact-plugin-cli-windows-x86_64.exe.gz"
     sh "gunzip -N -f #{package_dir}/bin/pact-plugin-cli.exe.gz"
     sh "chmod +x #{package_dir}/bin/pact-plugin-cli.exe"
   end
