@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('./Gemfile', __dir__)
+# require 'bundler/setup'
+require 'rspec/support/spec'
+# require 'rubygems/package'
+# RSpec::Core::RakeTask.new(:spec)
+# task default: :spec
+load Gem.bin_path("rspec", "rspec")

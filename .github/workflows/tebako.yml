@@ -1,0 +1,67 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build_linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1.194.0
+      with:
+        ruby-version: 3.3.5
+    - name: Build Linux glibc arm64
+      run: |
+        docker run --platform linux/arm64 --rm -v $PWD:/mnt/w \
+        -t ghcr.io/tamatebako/tebako-ubuntu-20.04:latest \
+        tebako press --root=/mnt/w/examples/pact --entry-point=app --output=/mnt/w/pact-3.3.5-arm64-linux --Ruby=3.3.5
+    - name: Build Linux glibc amd64
+      run: |
+        docker run --rm -v $PWD:/mnt/w \
+        -t ghcr.io/tamatebako/amd64-tebako-ubuntu-20.04:latest \
+        tebako press --root=/mnt/w/examples/pact --entry-point=app --output=/mnt/w/pact-3.3.5-amd64-linux --Ruby=3.3.5
+    - name: Build Linux glibc arm64
+      run: |
+        docker run --platform linux/arm64 --rm -v $PWD:/mnt/w \
+        -t ghcr.io/tamatebako/tebako-alpine-3.17:latest \
+        tebako press --root=/mnt/w/examples/pact --entry-point=app --output=/mnt/w/pact-3.3.5-arm64-linux-musl --Ruby=3.3.5
+
+    - name: Build Linux glibc amd64
+      run: |
+        docker run --rm -v $PWD:/mnt/w \
+        -t ghcr.io/tamatebako/amd64-tebako-alpine-3.17:latest \
+        tebako press --root=/mnt/w/examples/pact --entry-point=app --output=/mnt/w/pact-3.3.5-amd64-linux-musl --Ruby=3.3.5
+    - name: Upload standalone packages
+      uses: actions/upload-artifact@v3
+      with:
+        name: pkg
+        path: pact-3.3.5-*
+  build_macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["macos-13","macos-14"]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1.194.0
+      with:
+        ruby-version: 3.3.5
+    - name: Install dependencies
+      run: |
+        brew install gnu-sed bash pkg-config bison flex binutils libffi gdbm zlib \
+        ncurses double-conversion boost jemalloc fmt glog libevent libsodium lz4 xz \
+        libyaml openssl@3
+    - name: Build macos $(uname -m)
+      run: |
+        tebako press -p output/3.3.5 -R 3.3.5 --root=examples/pact --entry-point=app --output=pact-3.3.5-$(uname -m)-osx
+    - name: Upload standalone packages
+      uses: actions/upload-artifact@v3
+      with:
+        name: pkg
+        path: pact-3.3.5-*
+
