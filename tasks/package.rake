@@ -4,7 +4,9 @@ require 'bundler/setup'
 PACKAGE_NAME = 'pact'
 VERSION = File.read('VERSION').strip
 TRAVELING_RUBY_VERSION = '20250616-3.4.4'
+TRAVELING_RB_VERSION = TRAVELING_RUBY_VERSION.split('-').last
 TRAVELING_RUBY_PKG_DATE = TRAVELING_RUBY_VERSION.split('-').first
+RUBY_COMPAT_VERSION = TRAVELING_RB_VERSION.split('.').first(2).join('.') + '.0'
 PLUGIN_CLI_VERSION = '0.1.3'
 
 desc 'Package pact-ruby-standalone for OSX, Linux x86_64 and windows x86_64'
@@ -56,7 +58,7 @@ namespace :package do
     sh 'mkdir -p build/tmp/lib/pact/mock_service'
     # sh "cp lib/pact/mock_service/version.rb build/tmp/lib/pact/mock_service/version.rb"
     Bundler.with_unbundled_env do
-      sh "cd build/tmp && env bundle lock --add-platform x64-mingw32 && bundle config set --local path '../vendor' && env BUNDLE_DEPLOYMENT=true bundle install"
+      sh "cd build/tmp && env bundle lock --add-platform x64-mingw-ucrt && bundle config set --local path '../vendor' && env BUNDLE_DEPLOYMENT=true bundle install"
       generate_readme
     end
     sh 'rm -rf build/tmp'
@@ -128,9 +130,24 @@ def create_package(version, source_target, package_target, os_type)
   sh "mkdir #{package_dir}/lib/vendor/.bundle"
   sh "cp packaging/bundler-config #{package_dir}/lib/vendor/.bundle/config"
 
+  unless package_target.include? 'windows'
+    os = package_target.split('-').first
+    arch = package_target.split('-').last
+    arch = 'aarch64' if arch == 'arm64' && os == 'linux'
+    os = 'darwin' if os == 'osx'
+    'mingw-ucrt' if os == 'windows' && arch == 'x86'
+    gem_name = 'bigdecimal'
+    gem_version = '3.2.2'
+    sh "gem install #{gem_name} --platform #{arch}-#{os} --ignore-dependencies --no-document --install-dir '#{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}'"
+    download_and_unpack_ext package_dir, package_target, ["#{gem_name}-#{gem_version}"]
+    sh "mv #{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}/specifications/#{gem_name}-#{gem_version}.gemspec #{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}/specifications/default/"
+    sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
+    # gem_name = 'json'
+    # gem_version = '2.12.2'
+    # download_and_unpack_ext package_dir, package_target, ["#{gem_name}-#{gem_version}"]
+  end
   remove_unnecessary_files package_dir
   install_plugin_cli package_dir, package_target
-
   return if ENV['DIR_ONLY']
 
   sh 'mkdir -p pkg'
@@ -219,6 +236,20 @@ def remove_unnecessary_files(package_dir)
   # sh "rm -f #{package_dir}/lib/ruby/lib/ruby/*/*/enc/windows*"
   # sh "rm -f #{package_dir}/lib/ruby/lib/ruby/*/*/enc/utf_16*"
   # sh "rm -f #{package_dir}/lib/ruby/lib/ruby/*/*/enc/utf_32*"
+  #
+end
+
+def download_and_unpack_ext(package_dir, package_target, native_gems)
+  # no native gems for windows, so we exclude packing them here
+  return if package_target.include? 'windows'
+
+  native_gems.each do |native_gem|
+    sh "cd #{package_dir}/lib/ruby/lib/ruby/gems && \
+      curl -L -O --fail https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz && \
+    ls && pwd && \
+    tar xzfv traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz && \
+    rm traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz"
+  end
 end
 
 def generate_readme
