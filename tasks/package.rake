@@ -139,7 +139,7 @@ def create_package(version, source_target, package_target, os_type)
     gem_name = 'bigdecimal'
     gem_version = '3.2.2'
     sh "gem install #{gem_name} --platform #{arch}-#{os} --ignore-dependencies --no-document --install-dir '#{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}'"
-    download_and_unpack_ext package_dir, package_target, ["#{gem_name}-#{gem_version}"]
+    # download_and_unpack_ext package_dir, package_target, ["#{gem_name}-#{gem_version}"]
     sh "mv #{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}/specifications/#{gem_name}-#{gem_version}.gemspec #{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}/specifications/default/"
     sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
     # gem_name = 'json'
