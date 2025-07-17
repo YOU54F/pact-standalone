@@ -130,22 +130,22 @@ def create_package(version, source_target, package_target, os_type)
   sh "mkdir #{package_dir}/lib/vendor/.bundle"
   sh "cp packaging/bundler-config #{package_dir}/lib/vendor/.bundle/config"
 
-  unless package_target.include? 'windows'
-    os = package_target.split('-').first
-    arch = package_target.split('-').last
-    arch = 'aarch64' if arch == 'arm64' && os == 'linux'
-    os = 'darwin' if os == 'osx'
-    'mingw-ucrt' if os == 'windows' && arch == 'x86'
-    gem_name = 'bigdecimal'
-    gem_version = '3.2.2'
-    sh "gem install #{gem_name} --platform #{arch}-#{os} --ignore-dependencies --no-document --install-dir '#{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}'"
-    # download_and_unpack_ext package_dir, package_target, ["#{gem_name}-#{gem_version}"]
-    sh "mv #{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}/specifications/#{gem_name}-#{gem_version}.gemspec #{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}/specifications/default/"
-    sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
-    # gem_name = 'json'
-    # gem_version = '2.12.2'
-    # download_and_unpack_ext package_dir, package_target, ["#{gem_name}-#{gem_version}"]
-  end
+  # unless package_target.include? 'windows'
+  os = package_target.split('-').first
+  arch = package_target.split('-').last
+  arch = 'aarch64' if arch == 'arm64' && os == 'linux'
+  os = 'darwin' if os == 'osx'
+  'mingw-ucrt' if os == 'windows' && arch == 'x86'
+  gem_name = 'bigdecimal'
+  gem_version = '3.2.2'
+  sh "gem install #{gem_name} --platform #{arch}-#{os} --ignore-dependencies --no-document --install-dir '#{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}'"
+  # download_and_unpack_ext package_dir, package_target, ["#{gem_name}-#{gem_version}"]
+  sh "mv #{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}/specifications/#{gem_name}-#{gem_version}.gemspec #{package_dir}/lib/ruby/lib/ruby/gems/#{RUBY_COMPAT_VERSION}/specifications/default/"
+  sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
+  # gem_name = 'json'
+  # gem_version = '2.12.2'
+  # download_and_unpack_ext package_dir, package_target, ["#{gem_name}-#{gem_version}"]
+  # end
   remove_unnecessary_files package_dir
   install_plugin_cli package_dir, package_target
   return if ENV['DIR_ONLY']
