@@ -27,7 +27,7 @@ if [ "$BINARY_OS" == "" ] || [ "$BINARY_ARCH" == "" ] ; then
         ;;
     "Windows"* | "MINGW64"*)
         BINARY_OS=windows
-        BINARY_ARCH=x86_64
+        BINARY_ARCH=x86
         ;;
     "Windows"* | "MINGW"*)
         BINARY_OS=windows
