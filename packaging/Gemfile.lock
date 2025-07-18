@@ -9,7 +9,7 @@ GEM
     dig_rb (1.0.1)
     expgen (0.1.1)
       parslet
-    faraday (2.13.1)
+    faraday (2.13.2)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
@@ -22,17 +22,17 @@ GEM
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    json (2.7.1)
+    json (2.7.2)
     jsonpath (1.1.5)
       multi_json
     logger (1.7.0)
     mini_mime (1.1.5)
-    multi_json (1.15.0)
+    multi_json (1.16.0)
     multi_xml (0.7.2)
       bigdecimal (~> 3.1)
     net-http (0.6.0)
       uri
-    ostruct (0.6.2)
+    ostruct (0.6.3)
     pact (1.66.1)
       jsonpath (~> 1.0)
       pact-mock_service (~> 3.0, >= 3.3.1)
@@ -144,7 +144,7 @@ PLATFORMS
 
 DEPENDENCIES
   bigdecimal (= 3.1.5)
-  json (= 2.7.1)
+  json (= 2.7.2)
   pact (= 1.66.1)
   pact-message (= 0.11.1)
   pact-mock_service (= 3.12.3)
