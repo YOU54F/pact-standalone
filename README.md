@@ -9,7 +9,7 @@ Creates a standalone pact command line executable containing
 
 ## Package contents
 
-This version (2.5.3) of the Pact standalone executables package contains:
+This version (2.5.4) of the Pact standalone executables package contains:
 
   * pact gem 1.66.2
   * pact-mock_service gem 3.12.3
@@ -84,7 +84,6 @@ Ruby is not required on the host platform, Ruby 3.3.9 is provided in the distrib
 | Linux  | 3.3.9     | x86_64         | ✅        |
 | Linux  | 3.3.9     | aarch64 (arm64)| ✅        |
 | Windows| 3.3.9     | x86_64         | ✅        |
-| Windows| 3.3.9     | aarch64 (arm64)| 🚧        |
 | Windows| N/A.      | aarch64 (arm64)| ✅        |
 
 🚧 - Tested under emulation mode x86_64 in Windows on ARM
@@ -92,6 +91,8 @@ Ruby is not required on the host platform, Ruby 3.3.9 is provided in the distrib
 Windows-arm64 package supports rust based executables only and does not provide an arm64 runtime currently.
 
 To use ruby packages on windows on arm, please use the x86_64 package.
+
+🚧 - Tested under emulation mode x86_64 in Windows on ARM
 
 ## Usage
 

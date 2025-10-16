@@ -1,3 +1,50 @@
+<a name="v2.5.4"></a>
+### v2.5.4 (2025-10-14)
+
+
+#### Features
+
+* control ruby cmds via PACT_CLI_LEGACY env var	 ([b319713](/../../commit/b319713))
+* add pact-broker-cli rust implementation	 ([a32dac9](/../../commit/a32dac9))
+* update pact entrypoint to list/execute all binaries	 ([7e18b6d](/../../commit/7e18b6d))
+* use sh for wrapper scripts	 ([74a6be3](/../../commit/74a6be3))
+
+* **gems**
+  * update non-pact gems	 ([96adfce](/../../commit/96adfce))
+  * update to pact (1.66.1)	 ([9b77078](/../../commit/9b77078))
+  * update to pact-support (1.21.2)	 ([9a342e8](/../../commit/9a342e8))
+  * update to pact (1.66.0)	 ([623912b](/../../commit/623912b))
+  * update to pact-support (1.21.1)	 ([c16d698](/../../commit/c16d698))
+  * update to pact-support (1.21.0)	 ([51f9a30](/../../commit/51f9a30))
+  * update to pact_broker-client (1.77.0)	 ([4ee32f5](/../../commit/4ee32f5))
+  * update to pact-support (1.20.2), pact_broker-client (1.76.2)	 ([fb02f49](/../../commit/fb02f49))
+  * update to pact (1.65.2)	 ([dde96f2](/../../commit/dde96f2))
+  * update to pact_broker-client (1.76.1)	 ([9f3e2d2](/../../commit/9f3e2d2))
+  * update to pact_broker-client (1.76.0)	 ([b90a4c9](/../../commit/b90a4c9))
+  * update to pact (1.65.1), pact-support (1.20.1)	 ([23b3c41](/../../commit/23b3c41))
+  * update to pact (1.65.0)	 ([054617e](/../../commit/054617e))
+  * update to pact-provider-verifier (1.38.1)	 ([e46fa9c](/../../commit/e46fa9c))
+  * update to pact_broker-client (1.75.4)	 ([e770a31](/../../commit/e770a31))
+  * update to pact_broker-client (1.75.3)	 ([4c96552](/../../commit/4c96552))
+  * update to pact_broker-client (1.75.2)	 ([d11b089](/../../commit/d11b089))
+
+* **deps**
+  * update to rack 3	 ([0b4bf7e](/../../commit/0b4bf7e))
+  * update rack 2.2.8.1 - update rpec 3.13.1 - thor 1.3.1	 ([3e3e6ca](/../../commit/3e3e6ca))
+
+
+#### Bug Fixes
+
+* **deps**
+  * update pact-provider-verifier to 1.39.1	 ([85367c5](/../../commit/85367c5))
+  * use rack-reverse-proxy pact-foundation fork - update to rack-test 2.1.0	 ([5ec14d2](/../../commit/5ec14d2))
+  * update pact-mock_service / pact-provider-verifier	 ([9e773f4](/../../commit/9e773f4))
+
+* Dockerfile-bundle-base to reduce vulnerabilities	 ([868ee2e](/../../commit/868ee2e))
+* pin bigdecimal to 3.1.5 as per ruby std gems	 ([dc0d352](/../../commit/dc0d352))
+* drop traveling-ruby to 3.2.3 due to segfaults on alpine	 ([960313f](/../../commit/960313f))
+
+
 <a name="v2.5.0"></a>
 ### v2.5.0 (2025-07-25)
 
