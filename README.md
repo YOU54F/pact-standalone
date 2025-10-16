@@ -21,23 +21,33 @@ This version (2.5.3) of the Pact standalone executables package contains:
   * [pact-stub-server](https://github.com/pact-foundation/pact-stub-server)
   * [pact_verifier_cli](https://github.com/pact-foundation/pact-reference/tree/master/rust/pact_verifier_cli)
   * [pact-plugin-cli](https://github.com/pact-foundation/pact-plugins/tree/main/cli)
+  * [pact-broker-cli](https://github.com/pact-foundation/pact-broker-cli)
 
 Binaries will be extracted into `pact/bin`:
 
 ```
 ./pact/bin/
 ├── pact (central entry point to all binaries)
-├── pact-broker
-├── pactflow
+├── pact-broker-cli
 ├── pact_mock_server_cli
 ├── pact-stub-server
 ├── pact_verifier_cli
 ├── pact-plugin-cli
-├── pact-message (legacy)
-├── pact-mock-service (legacy)
-├── pact-provider-verifier (legacy)
-└── pact-stub-service (legacy)
+├── pact-broker (legacy) - use `pact-broker-cli`
+├── pactflow (legacy) - use `pact-broker-cli pactflow`
+├── pact-message (legacy) - use `pact_mock_server_cli` (consumer) / `pact_verifier_cli` (provider)
+├── pact-mock-service (legacy) - use `pact_mock_server_cli`
+├── pact-provider-verifier (legacy) - use `pact_verifier_cli`
+└── pact-stub-service (legacy) - use `pact-stub-server`
 ```
+
+Note: from `v2.6.0+`, the legacy commands will redirect to the new cli executables built in rust.
+
+Existing behaviour can be preserved by setting the `PACT_CLI_LEGACY` environment variable.
+
+In `v3.0.0`, the ruby runtime will be removed completely, and all commands will link to the rust executables.
+
+Longer term, this package is likely to be deprecated, replaced with a single `pact` cli executable.
 
 ### Windows Users
 
@@ -75,8 +85,13 @@ Ruby is not required on the host platform, Ruby 3.3.9 is provided in the distrib
 | Linux  | 3.3.9     | aarch64 (arm64)| ✅        |
 | Windows| 3.3.9     | x86_64         | ✅        |
 | Windows| 3.3.9     | aarch64 (arm64)| 🚧        |
+| Windows| N/A.      | aarch64 (arm64)| ✅        |
 
 🚧 - Tested under emulation mode x86_64 in Windows on ARM
+
+Windows-arm64 package supports rust based executables only and does not provide an arm64 runtime currently.
+
+To use ruby packages on windows on arm, please use the x86_64 package.
 
 ## Usage
 

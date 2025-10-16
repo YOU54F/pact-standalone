@@ -42,7 +42,6 @@ PATH_TO_BIN=.${PATH_SEPERATOR}pkg${PATH_SEPERATOR}pact${PATH_SEPERATOR}bin${PATH
 tools=(
   pact
   pact-broker
-  pact-message
   pact-mock-service
   pact-provider-verifier
   pact-stub-service
@@ -51,14 +50,19 @@ tools=(
   pact-stub-server
   pact_verifier_cli
   pact_mock_server_cli
+  pact-broker-cli
 )
+
+if [ ! -z "${PACT_CLI_LEGACY:-}" ]; then
+  tools+=(pact-message)
+fi
 
 test_cmd=""
 for tool in ${tools[@]}; do
   echo testing $tool
   if [ "$BINARY_OS" = "windows" ] ; then FILE_EXT=.bat; fi
-  if [ "$BINARY_OS" = "windows" ] && ([ "$tool" = "pact-plugin-cli" ] || [ "$tool" = "pact-stub-server" ] || [ "$tool" = "pact_verifier_cli" ] || [ "$tool" = "pact_mock_server_cli" ]) ; then  FILE_EXT=.exe ; fi
-  if [ "$tool" = "pact_verifier_cli" ] || [ "$tool" = "pact-mock-service" ]; then  test_cmd="--help" ; fi
+  if [ "$BINARY_OS" = "windows" ] && ([ "$tool" = "pact-plugin-cli" ] || [ "$tool" = "pact-stub-server" ] || [ "$tool" = "pact_verifier_cli" ] || [ "$tool" = "pact_mock_server_cli" ] || [ "$tool" = "pact-broker-cli" ]) ; then  FILE_EXT=.exe ; fi
+  if [ "$tool" = "pact_verifier_cli" ] || [ "$tool" = "pact-mock-service" ] || [ "$tool" = "pact-broker-cli" ]; then  test_cmd="--help" ; fi
   echo executing ${tool}${FILE_EXT} 
   ${PATH_TO_BIN}${tool}${FILE_EXT} ${test_cmd};
 done
