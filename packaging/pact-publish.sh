@@ -18,9 +18,9 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 APP="$DIR/pact"
 if [ -x "$APP" ]; then
   if [ "$#" -eq 0 ]; then
-    exec "$APP" pact publish --help
+    exec "$APP" broker publish --help
   else
-    exec "$APP" pact publish "$@"
+    exec "$APP" broker publish "$@"
   fi
   exit $?
 else
