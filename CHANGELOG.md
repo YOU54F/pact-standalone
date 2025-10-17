@@ -1,3 +1,12 @@
+<a name="v2.5.5"></a>
+### v2.5.5 (2025-10-17)
+
+
+#### Features
+
+* add pact-cli, expose pact, redirect old cmds to new cli.	 ([80b7f49](/../../commit/80b7f49))
+
+
 <a name="v2.5.4"></a>
 ### v2.5.4 (2025-10-14)
 
