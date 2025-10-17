@@ -15,7 +15,6 @@ done
 RDIR="$( dirname "$SOURCE" )"
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-if [ -z "${PACT_CLI_LEGACY}" ]; then
   APP="$DIR/pact"
   if [ -x "$APP" ]; then
     if [ "$#" -eq 0 ]; then
@@ -24,18 +23,7 @@ if [ -z "${PACT_CLI_LEGACY}" ]; then
       exec "$APP" stub "$@"
     fi
     exit $?
+  else
+    echo "Cannot execute $APP"
+    exit 1
   fi
-fi
-
-# Figure out where this script is located.
-LIBDIR="$(cd "$DIR" && cd ../lib && pwd)"
-
-# Tell Bundler where the Gemfile and gems are.
-export BUNDLE_GEMFILE="$LIBDIR/vendor/Gemfile"
-unset BUNDLE_IGNORE_CONFIG
-unset RUBYGEMS_GEMDEPS
-unset BUNDLE_APP_CONFIG
-export BUNDLE_FROZEN=1
-
-# Run the actual app using the bundled Ruby interpreter, with Bundler activated.
-exec "$LIBDIR/ruby/bin/ruby" -E UTF-8 -rreadline -rbundler/setup -I "$LIBDIR/app/lib" "$LIBDIR/app/pact-stub-service.rb" "$@"

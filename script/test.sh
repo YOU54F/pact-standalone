@@ -41,25 +41,18 @@ PATH_TO_BIN=.${PATH_SEPERATOR}pkg${PATH_SEPERATOR}pact${PATH_SEPERATOR}bin${PATH
 
 
 tools=(
+  pact 
+  "pact plugin"
+  "pact stub"
+  "pact verifier"
+  "pact mock"
+  "pact broker"
   pact-broker
   pact-mock-service
   pact-provider-verifier
   pact-stub-service
   pactflow
 )
-
-if [ ! -z "${PACT_CLI_LEGACY:-}" ]; then
-  tools+=(pact-message)
-else
-  tools+=(
-    pact
-    "pact plugin"
-    "pact stub"
-    "pact verifier"
-    "pact mock"
-    "pact broker"
-  )
-fi
 
 test_cmd=""
 for tool in "${tools[@]}"; do
@@ -79,9 +72,7 @@ for tool in "${tools[@]}"; do
       FILE_EXT=".exe"
       ;;
       pact)
-      if [ ! -z "${PACT_CLI_LEGACY:-}" ]; then
-        FILE_EXT=".exe"
-      fi
+      FILE_EXT=".exe"
       ;;
       *)
       FILE_EXT=".bat"
