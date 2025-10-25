@@ -1,3 +1,20 @@
+<a name="v2.5.6"></a>
+### v2.5.6 (2025-10-25)
+
+
+#### Features
+
+* **gems**
+  * update to pact (1.67.2)	 ([23ea4d7](/../../commit/23ea4d7))
+  * update to pact (1.67.1)	 ([d6f2cad](/../../commit/d6f2cad))
+  * update to pact (1.67.0), pact-ffi (0.4.28.0-aarch64-linux), pact-ffi (0.4.28.0-arm64-darwin), pact-ffi (0.4.28.0-x64-mingw32), pact-ffi (0.4.28.0-x86_64-darwin), pact-ffi (0.4.28.0-x86_64-linux)	 ([ed45d86](/../../commit/ed45d86))
+
+
+#### Bug Fixes
+
+* remove libs from extensions, fix release note new line	 ([679ad5a](/../../commit/679ad5a))
+
+
 <a name="v2.5.5"></a>
 ### v2.5.5 (2025-10-22)
 
