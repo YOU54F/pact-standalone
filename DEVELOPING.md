@@ -10,7 +10,7 @@ pact-standalone is packaged with `traveling-ruby`
 
 For macOS - it will build for arm64 or x86_64 depending on your processor
 
-    cd osx
+    cd macos
     rake stash_conflicting_paths
     rake --trace
     rake unstash_conflicting_paths
@@ -18,7 +18,7 @@ For macOS - it will build for arm64 or x86_64 depending on your processor
 For macOS x86_64 on an m1 machine
 
     sudo softwareupdate --install-rosetta --agree-to-license
-    cd osx
+    cd macos
     rake stash_conflicting_paths
     arch -x86_64 rake --trace
     rake unstash_conflicting_paths
@@ -80,8 +80,8 @@ Build only selected platforms
 
     bundle exec rake package:linux:arm64
     bundle exec rake package:linux:x64
-    bundle exec rake package:osx:arm64
-    bundle exec rake package:osx:x64
+    bundle exec rake package:macos:arm64
+    bundle exec rake package:macos:x64
     bundle exec rake package:windows:x64
     bundle exec rake package:windows:x86
 
@@ -99,12 +99,12 @@ Build only selected platforms
     # download_runtime(TRAVELING_RUBY_VERSION, "linux-arm64")
     end
 
-    file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-x86_64.tar.gz" do
-    # download_runtime(TRAVELING_RUBY_VERSION, "osx-x86_64")
+    file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-macos-x86_64.tar.gz" do
+    # download_runtime(TRAVELING_RUBY_VERSION, "macos-x86_64")
     end
 
-    file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-osx-arm64.tar.gz" do
-    # download_runtime(TRAVELING_RUBY_VERSION, "osx-arm64")
+    file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-macos-arm64.tar.gz" do
+    # download_runtime(TRAVELING_RUBY_VERSION, "macos-arm64")
     end
 
     file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86_64.tar.gz" do
@@ -130,8 +130,8 @@ Build only selected platforms
 
 | OS     | Ruby      | Architecture | Supported |
 | -------| ------- | ------------ | --------- |
-| OSX    | 3.3.9     | x86_64       | ✅         |
-| OSX    | 3.3.9     | aarch64 (arm)| ✅         |
+| MacOS    | 3.3.9     | x86_64       | ✅         |
+| MacOS    | 3.3.9     | aarch64 (arm)| ✅         |
 | Linux  | 3.3.9   | x86_64       | ✅         |
 | Linux  | 3.3.9   | aarch64 (arm)| ✅          |
 | Windows| 3.3.9 | x86_64       | ✅        |

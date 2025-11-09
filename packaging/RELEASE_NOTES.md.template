@@ -15,15 +15,15 @@ curl -fsSL https://raw.githubusercontent.com/pact-foundation/pact-standalone/mas
 #### x86_64
 
 ```
-curl -LO https://github.com/pact-foundation/pact-standalone/releases/download/<TAG_NAME>/pact-<PACKAGE_VERSION>-osx-x86_64.tar.gz
-tar xzf pact-<PACKAGE_VERSION>-osx-x86_64.tar.gz
+curl -LO https://github.com/pact-foundation/pact-standalone/releases/download/<TAG_NAME>/pact-<PACKAGE_VERSION>-macos-x86_64.tar.gz
+tar xzf pact-<PACKAGE_VERSION>-macos-x86_64.tar.gz
 ```
 
 #### arm64
 
 ```
-curl -LO https://github.com/pact-foundation/pact-standalone/releases/download/<TAG_NAME>/pact-<PACKAGE_VERSION>-osx-arm64.tar.gz
-tar xzf pact-<PACKAGE_VERSION>-osx-arm64.tar.gz
+curl -LO https://github.com/pact-foundation/pact-standalone/releases/download/<TAG_NAME>/pact-<PACKAGE_VERSION>-macos-arm64.tar.gz
+tar xzf pact-<PACKAGE_VERSION>-macos-arm64.tar.gz
 ```
 
 ### Linux

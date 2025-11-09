@@ -3,7 +3,7 @@ GEM
   specs:
     awesome_print (1.9.2)
     base64 (0.3.0)
-    bigdecimal (3.3.1)
+    bigdecimal (3.1.8)
     csv (3.3.5)
     diff-lcs (1.6.2)
     dig_rb (1.0.1)
@@ -22,7 +22,7 @@ GEM
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    json (2.16.0)
+    json (2.9.1)
     jsonpath (1.1.5)
       multi_json
     logger (1.7.0)
@@ -150,8 +150,8 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  bigdecimal (= 3.3.1)
-  json (= 2.16.0)
+  bigdecimal (= 3.1.8)
+  json (= 2.9.1)
   pact (= 1.67.2)
   pact-message (= 0.11.1)
   pact-mock_service (= 3.12.3)

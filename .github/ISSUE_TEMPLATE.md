@@ -14,7 +14,7 @@ I have already (please mark the applicable with an `x`):
 
 * **pact library:** eg pact-js 1.2.3
 * **pact-ruby-standalone:** eg 2.3.1-1
-* **OS**: e.g. Mac OSX 10.11.5
+* **OS**: e.g. MacOS 10.11.5
 
 ## Expected behaviour
 

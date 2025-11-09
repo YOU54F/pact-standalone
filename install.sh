@@ -47,14 +47,14 @@ case $(uname -sm) in
   if [ "$MAJOR_PACT_CLI_VERSION" -lt 2 ]; then
     os='osx'
   else
-    os='osx-arm64'
+    os='macos-arm64'
   fi
   ;;
 'Darwin x86' | 'Darwin x86_64')
   if [ "$MAJOR_PACT_CLI_VERSION" -lt 2 ]; then
     os='osx'
   else
-    os='osx-x86_64'
+    os='macos-x86_64'
   fi
   ;;
 "Windows"* | "MINGW64"*)
@@ -74,7 +74,7 @@ case $os in
 'windows'* | 'win32')
   filename="pact-${PACT_CLI_VERSION#v}-${os}.zip"
   ;;
-'osx'* | 'linux'*)
+'macos'* | 'linux'* | 'osx'*)
   filename="pact-${PACT_CLI_VERSION#v}-${os}.tar.gz"
   ;;
 esac
@@ -87,7 +87,7 @@ case $os in
 'windows'* | 'win32')
   (unzip "${filename}" && echo unarchived "${filename}") || (echo "Sorry, you'll need to unarchived the pact-standalone manually." && exit 1)
   ;;
-'osx'* | 'linux'*)
+'macos'* | 'linux'* | 'osx'*)
   (tar xzf "${filename}" && echo unarchived "${filename}") || (echo "Sorry, you'll need to unarchived the pact-standalone manually." && exit 1)
   ;;
 esac

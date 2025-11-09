@@ -48,3 +48,23 @@ jobs:
       uses: actions/download-artifact@v4
     - name: test ${{ matrix.os }} package
       run: ./script/unpack-and-test.sh
+  test-win-arm:
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-11-arm"]
+        shell: ["sh","bash"]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v5
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v4
+    - name: test ${{ matrix.os }} package
+      run: ./script/unpack-and-test.sh
+      env:
+        BINARY_ARCH: arm64
+        BINARY_OS: windows
