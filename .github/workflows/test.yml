@@ -1,0 +1,28 @@
+name: test
+
+on:
+  push:
+
+jobs:
+  test-win:
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-11-arm","windows-latest"]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: test
+      shell: bash
+      run: |
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          ARCH="x86_64"
+        else
+          ARCH="arm64"
+        fi
+        curl -LO https://github.com/YOU54F/test/releases/download/0.0.0/pact-2.5.5-windows-${ARCH}.zip
+        unzip pact-2.5.5-windows-${ARCH}.zip
+        cd pact-2.5.5-windows-${ARCH}
+        ./pact/bin/pact version
