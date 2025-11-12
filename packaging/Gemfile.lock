@@ -135,6 +135,7 @@ GEM
 
 PLATFORMS
   aarch64-linux
+  aarch64-mingw-ucrt
   arm64-darwin
   arm64-darwin-20
   arm64-darwin-21

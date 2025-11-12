@@ -84,39 +84,37 @@ namespace :package do
   end
   namespace :windows do
     desc "Package pact-standalone for windows x86_64"
-    task :x86_64 => ["build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86_64.tar.gz"] do
-      Rake::Task["package:bundle_install"].invoke("windows")
+    task :x86_64 => [
+      :bundle_install,
+      "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86_64.tar.gz",
+      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-x86_64-json-#{JSON_VERSION}.tar.gz",
+      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
+    ] do
       create_package(TRAVELING_RUBY_VERSION, "windows-x86_64", "windows-x86_64", :windows)
     end
     desc "Package pact-standalone for windows arm64"
-    task :arm64 => ["build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-arm64.tar.gz"] do
-      Rake::Task["package:bundle_install"].invoke("windows")
+    task :arm64 => [
+      :bundle_install,
+      "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-arm64.tar.gz",
+      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-arm64-json-#{JSON_VERSION}.tar.gz",
+      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
+      ] do
       create_package(TRAVELING_RUBY_VERSION, "windows-arm64", "windows-arm64", :windows)
     end
   end
 
   desc "Install gems to local directory. Usage: rake package:bundle_install[platform] (e.g. linux, windows, macos)"
-  task :bundle_install, [:platform] do |t, args|
-    platform = args[:platform] || 'linux'
+  task :bundle_install do
     if RUBY_VERSION !~ /^#{RUBY_MAJOR_VERSION}\.#{RUBY_MINOR_VERSION}\./
       abort "You can only 'bundle install' using Ruby #{TRAVELING_RB_VERSION}, because that's what Traveling Ruby uses. \n You are using Ruby #{RUBY_VERSION}."
     end
     sh "rm -rf build/tmp"
     sh "mkdir -p build/tmp"
-    sh "cp packaging/Gemfile packaging/Gemfile.lock build/tmp/" unless platform == 'windows'
-    sh "cp packaging/Gemfile-windows.lock build/tmp/Gemfile.lock" if platform == 'windows'
-    sh "cp packaging/Gemfile-windows build/tmp/Gemfile" if platform == 'windows'
+    sh "cp packaging/Gemfile packaging/Gemfile.lock build/tmp/"
     sh "mkdir -p build/tmp/lib/pact/mock_service"
     # sh "cp lib/pact/mock_service/version.rb build/tmp/lib/pact/mock_service/version.rb"
-    # sh "cd build/tmp && env TARGET_OS=windows bundle update json" if platform == 'windows'
     Bundler.with_unbundled_env do
-      env_vars = platform == 'windows' ? "TARGET_OS=windows " : ""
-      if platform == 'windows'
-        sh "cd build/tmp && env bundle lock --add-platform x64-mingw32 && bundle config set --local path '../vendor' && env BUNDLE_DEPLOYMENT=true TARGET_OS=windows bundle install"
-      else
-
-        sh "cd build/tmp && env bundle config set --local path '../vendor' && env BUNDLE_DEPLOYMENT=true bundle install"
-      end
+      sh "cd build/tmp && env bundle config set --local path '../vendor' && env BUNDLE_DEPLOYMENT=true bundle install --verbose"
       generate_readme
     end
     sh "rm -rf build/tmp"
@@ -127,8 +125,6 @@ namespace :package do
     Bundler.with_unbundled_env do
       sh "mkdir -p build/tmp"
       sh "cp packaging/Gemfile packaging/Gemfile.lock build/tmp/"
-      sh "cp packaging/Gemfile-windows.lock build/tmp/Gemfile.lock" if platform == 'windows'
-      sh "cp packaging/Gemfile-windows build/tmp/Gemfile" if platform == 'windows'
       sh "cd build/tmp && env BUNDLE_IGNORE_CONFIG=1 bundle install --path ../vendor --without development"
       generate_readme
     end
@@ -184,6 +180,12 @@ end
 file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-x86_64-json-#{JSON_VERSION}.tar.gz" do
   download_native_extension('macos-x86_64', "json-#{JSON_VERSION}")
 end
+file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-x86_64-json-#{JSON_VERSION}.tar.gz" do
+  download_native_extension('windows-x86_64', "json-#{JSON_VERSION}")
+end
+file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-arm64-json-#{JSON_VERSION}.tar.gz" do
+  download_native_extension('windows-arm64', "json-#{JSON_VERSION}")
+end
 file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
   download_native_extension('linux-arm64', "bigdecimal-#{BIGDECIMAL_VERSION}")
 end
@@ -201,6 +203,12 @@ file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-arm64-bigdecimal
 end
 file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
   download_native_extension('macos-x86_64', "bigdecimal-#{BIGDECIMAL_VERSION}")
+end
+file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
+  download_native_extension('windows-x86_64', "bigdecimal-#{BIGDECIMAL_VERSION}")
+end
+file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
+  download_native_extension('windows-arm64', "bigdecimal-#{BIGDECIMAL_VERSION}")
 end
 
 def create_package(version, source_target, package_target, os_type)
@@ -231,9 +239,7 @@ def create_package(version, source_target, package_target, os_type)
   end
 
   sh "cp -pR build/vendor #{package_dir}/lib/"
-  sh "cp packaging/Gemfile packaging/Gemfile.lock #{package_dir}/lib/vendor/" unless package_target.include? 'windows'
-  sh "cp packaging/Gemfile-windows.lock #{package_dir}/lib/vendor/Gemfile.lock" if package_target.include? 'windows'
-  sh "cp packaging/Gemfile-windows #{package_dir}/lib/vendor/Gemfile" if package_target.include? 'windows'
+  sh "cp packaging/Gemfile packaging/Gemfile.lock #{package_dir}/lib/vendor/"
   sh "mkdir #{package_dir}/lib/vendor/.bundle"
   sh "cp packaging/bundler-config #{package_dir}/lib/vendor/.bundle/config"
 
@@ -242,10 +248,8 @@ def create_package(version, source_target, package_target, os_type)
   else
     sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
   end
-  if os_type == :unix
     sh "tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{source_target}-json-#{JSON_VERSION}.tar.gz " + "-C #{package_dir}/lib/vendor/ruby"
     sh "tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{source_target}-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz " + "-C #{package_dir}/lib/vendor/ruby"
-  end
   remove_unnecessary_files package_dir
 
   if !ENV['DIR_ONLY']
@@ -257,7 +261,7 @@ def create_package(version, source_target, package_target, os_type)
     sh "zip -9rq pkg/#{package_name}.zip #{package_dir}"
   end
 
-  # sh "rm -rf #{package_dir}"
+  sh "rm -rf #{package_dir}"
   end
 end
 
