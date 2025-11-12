@@ -39,7 +39,6 @@ task "package:linux:glibc" => [
 task "package:macos" => [
   'package:macos:x86_64',
   'package:macos:arm64']
-  
 
 
 namespace :package do
@@ -275,11 +274,7 @@ def create_package(version, source_target, package_target, os_type)
   if !ENV['DIR_ONLY']
     sh "mkdir -p pkg"
 
-  if os_type == :unix
     sh "tar -czf pkg/#{package_name}.tar.gz #{package_dir}"
-  else
-    sh "zip -9rq pkg/#{package_name}.zip #{package_dir}"
-  end
 
   sh "rm -rf #{package_dir}"
   end

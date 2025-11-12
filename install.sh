@@ -70,26 +70,13 @@ case $(uname -sm) in
   ;;
 esac
 
-case $os in
-'windows'* | 'win32')
-  filename="pact-${PACT_CLI_VERSION#v}-${os}.zip"
-  ;;
-'macos'* | 'linux'* | 'osx'*)
-  filename="pact-${PACT_CLI_VERSION#v}-${os}.tar.gz"
-  ;;
-esac
+filename=~"pact-${PACT_CLI_VERSION#v}-${os}.tar.gz"
 
 echo "-------------"
 echo "Downloading:"
 echo "-------------"
 (curl -sLO https://github.com/pact-foundation/pact-standalone/releases/download/"${PACT_CLI_VERSION}"/"${filename}" && echo downloaded "${filename}") || (echo "Sorry, you'll need to install the pact-standalone manually." && exit 1)
-case $os in
-'windows'* | 'win32')
-  (unzip "${filename}" && echo unarchived "${filename}") || (echo "Sorry, you'll need to unarchived the pact-standalone manually." && exit 1)
-  ;;
-'macos'* | 'linux'* | 'osx'*)
-  (tar xzf "${filename}" && echo unarchived "${filename}") || (echo "Sorry, you'll need to unarchived the pact-standalone manually." && exit 1)
-  ;;
+(tar xzf "${filename}" && echo unarchived "${filename}") || (echo "Sorry, you'll need to unarchived the pact-standalone manually." && exit 1)
 esac
 (rm "${filename}" && echo removed "${filename}") || (echo "Sorry, you'll need to remove the pact-standalone archive manually." && exit 1)
 

@@ -36,15 +36,11 @@ if [ "$BINARY_OS" == "" ] || [ "$BINARY_ARCH" == "" ] ; then
     esac;
 fi
 
-if [[ "$BINARY_OS" == "windows" ]]; then
-    FILE_EXT=".zip"
-fi
-
 cd pkg
 rm -rf pact
 ls
 
-if [ "$BINARY_OS" != "windows" ]; then tar xvf *$BINARY_OS-$BINARY_ARCH.tar.gz; else unzip *$BINARY_OS-$BINARY_ARCH.zip; fi
+tar xvf *$BINARY_OS-$BINARY_ARCH.tar.gz
 if [ "$BINARY_OS" != "windows" ] ; then PATH_SEPERATOR=/ ; else PATH_SEPERATOR=\\; fi
 PATH_TO_BIN=.${PATH_SEPERATOR}pact${PATH_SEPERATOR}bin${PATH_SEPERATOR}
 

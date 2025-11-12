@@ -21,6 +21,6 @@ jobs:
         else
           ARCH="arm64"
         fi
-        curl -LO https://github.com/YOU54F/test/releases/download/0.0.0/pact-2.5.5-windows-${ARCH}.zip
-        unzip pact-2.5.5-windows-${ARCH}.zip
+        curl -LO https://github.com/YOU54F/test/releases/download/0.0.0/pact-2.5.5-windows-${ARCH}.tar.gz
+        tar xvf pact-2.5.5-windows-${ARCH}.tar.gz
         ./pact/bin/pact-broker.bat version
