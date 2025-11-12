@@ -250,7 +250,7 @@ def create_package(version, source_target, package_target, os_type)
   end
     sh "tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{source_target}-json-#{JSON_VERSION}.tar.gz " + "-C #{package_dir}/lib/vendor/ruby"
     sh "tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{source_target}-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz " + "-C #{package_dir}/lib/vendor/ruby"
-  remove_unnecessary_files package_dir
+  # remove_unnecessary_files package_dir
 
   if !ENV['DIR_ONLY']
     sh "mkdir -p pkg"
@@ -364,8 +364,6 @@ def download_native_extension(target, gem_name_and_version)
 end
 
 def download_and_unpack_ext(package_dir, package_target, native_gems)
-  # no native gems for windows, so we exclude packing them here
-  return if package_target.include? 'windows'
 
   native_gems.each do |native_gem|
     sh "cd #{package_dir}/lib/ruby/lib/ruby/gems && \
