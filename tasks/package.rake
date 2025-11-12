@@ -250,7 +250,7 @@ def create_package(version, source_target, package_target, os_type)
   end
     sh "tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{source_target}-json-#{JSON_VERSION}.tar.gz " + "-C #{package_dir}/lib/vendor/ruby"
     sh "tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{source_target}-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz " + "-C #{package_dir}/lib/vendor/ruby"
-  # remove_unnecessary_files package_dir
+  remove_unnecessary_files package_dir
 
   if !ENV['DIR_ONLY']
     sh "mkdir -p pkg"
