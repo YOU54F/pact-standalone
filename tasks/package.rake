@@ -22,6 +22,26 @@ task :package => [
   'package:windows:x86_64',
   'package:windows:arm64']
 
+task "package:windows" => [
+  'package:windows:x86_64',
+  'package:windows:arm64']
+task "package:linux" => [
+  'package:linux:x86_64',
+  'package:linux:arm64',
+  'package:linux:musl:x86_64',
+  'package:linux:musl:arm64']
+task "package:linux:musl" => [
+  'package:linux:musl:x86_64',
+  'package:linux:musl:arm64']
+task "package:linux:glibc" => [
+  'package:linux:x86_64',
+  'package:linux:arm64']
+task "package:macos" => [
+  'package:macos:x86_64',
+  'package:macos:arm64']
+  
+
+
 namespace :package do
   namespace :linux do
     desc "Package pact-standalone for Linux x86_64"
