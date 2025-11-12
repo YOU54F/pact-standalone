@@ -5,9 +5,6 @@ on:
 
 jobs:
   test-win:
-    defaults:
-      run:
-        shell: ${{ matrix.shell }}
     strategy:
       fail-fast: false
       matrix:
