@@ -21,5 +21,4 @@ jobs:
         fi
         curl -LO https://github.com/YOU54F/test/releases/download/0.0.0/pact-2.5.5-windows-${ARCH}.zip
         unzip pact-2.5.5-windows-${ARCH}.zip
-        cd pact-2.5.5-windows-${ARCH}
         ./pact/bin/pact version
