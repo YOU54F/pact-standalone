@@ -20,7 +20,7 @@ jobs:
     - uses: ruby/setup-ruby@v1.267.0
       with:
         ruby-version: 3.4.7
-        bundler-cache: true
+        # bundler-cache: true
     - name: Build
       run: bundle exec rake package:windows
     - name: Show standalone packages
