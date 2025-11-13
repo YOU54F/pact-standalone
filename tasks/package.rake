@@ -208,7 +208,7 @@ def create_package(version, source_target, package_target, os_type)
     sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
   end
 
-  download_and_unpack_ext(package_dir, source_target, NATIVE_GEMS)
+  download_and_unpack_ext(package_dir, source_target, NATIVE_GEMS) if ENV['WITH_NATIVE_EXT']
   remove_unnecessary_files package_dir
 
   if !ENV['DIR_ONLY']

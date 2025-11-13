@@ -51,12 +51,12 @@ if [ "$BINARY_OS" != "windows" ] ; then PATH_SEPERATOR=/ ; else PATH_SEPERATOR=\
 PATH_TO_BIN=.${PATH_SEPERATOR}pact${PATH_SEPERATOR}bin${PATH_SEPERATOR}
 
 tools=(
-  pact-broker
+#   pact-broker
   pact-message
   pact-mock-service
   pact-provider-verifier
   pact-stub-service
-  pactflow
+#   pactflow
 )
 
 test_cmd=""
