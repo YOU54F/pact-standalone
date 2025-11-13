@@ -20,10 +20,26 @@ if [ "$BINARY_OS" == "" ] || [ "$BINARY_ARCH" == "" ] ; then
     "Linux aarch64"* | "Linux arm64"*)
         BINARY_OS=linux
         BINARY_ARCH=arm64
+        if ldd /bin/ls >/dev/null 2>&1; then
+            ldd_output=$(ldd /bin/ls)
+            case "$ldd_output" in
+                *musl*) 
+                    BINARY_OS='linux-musl'
+                    ;;
+            esac
+        fi
         ;;
     'Linux x86_64' | "Linux"*)
         BINARY_OS=linux
         BINARY_ARCH=x86_64
+        if ldd /bin/ls >/dev/null 2>&1; then
+            ldd_output=$(ldd /bin/ls)
+            case "$ldd_output" in
+                *musl*) 
+                    BINARY_OS='linux-musl'
+                    ;;
+            esac
+        fi
         ;;
     "MINGW64*ARM64"*)
         BINARY_OS=windows

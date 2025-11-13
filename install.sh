@@ -34,6 +34,14 @@ MAJOR_PACT_CLI_VERSION=$(echo "$PACT_CLI_VERSION_WITHOUT_V" | cut -d '.' -f 1)
 case $(uname -sm) in
 'Linux x86_64')
   os='linux-x86_64'
+  if ldd /bin/ls >/dev/null 2>&1; then
+      ldd_output=$(ldd /bin/ls)
+      case "$ldd_output" in
+          *musl*) 
+              os='linux-musl-x86_64'
+              ;;
+      esac
+  fi
   ;;
 'Linux aarch64')
   if [ "$MAJOR_PACT_CLI_VERSION" -lt 2 ]; then
@@ -41,6 +49,14 @@ case $(uname -sm) in
     exit 1
   else
     os='linux-arm64'
+    if ldd /bin/ls >/dev/null 2>&1; then
+        ldd_output=$(ldd /bin/ls)
+        case "$ldd_output" in
+            *musl*) 
+                os='linux-musl-arm64'
+                ;;
+        esac
+    fi
   fi
   ;;
 'Darwin arm64')
@@ -70,7 +86,7 @@ case $(uname -sm) in
   ;;
 esac
 
-filename=~"pact-${PACT_CLI_VERSION#v}-${os}.tar.gz"
+filename="pact-${PACT_CLI_VERSION#v}-${os}.tar.gz"
 
 echo "-------------"
 echo "Downloading:"

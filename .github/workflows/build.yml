@@ -37,13 +37,12 @@ jobs:
   test:
     defaults:
       run:
-        shell: ${{ matrix.shell }}
+        shell: bash
     needs: [build]
     strategy:
       fail-fast: false
       matrix:
         os: ["windows-latest", "macos-latest", "ubuntu-latest"]
-        shell: ["bash"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v5
@@ -54,13 +53,12 @@ jobs:
   test-win-arm:
     defaults:
       run:
-        shell: ${{ matrix.shell }}
+        shell: bash
     needs: [build]
     strategy:
       fail-fast: false
       matrix:
         os: ["windows-11-arm"]
-        shell: ["sh","bash"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v5
@@ -71,3 +69,37 @@ jobs:
       env:
         BINARY_ARCH: arm64
         BINARY_OS: windows
+
+  test-linux-musl:
+    needs: [build]
+    runs-on: ubuntu-latest
+    container:
+      image: alpine:latest
+    steps:
+    - uses: actions/checkout@v5
+    - name: Install dependencies
+      run: apk add --no-cache bash
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v4
+    - name: test musl package
+      run: ./script/unpack-and-test.sh
+      env:
+        BINARY_ARCH: x86_64
+        BINARY_OS: linux-musl
+
+  test-linux-musl-arm:
+    needs: [build]
+    runs-on: ubuntu-22.04-arm
+    container:
+      image: alpine:latest
+    steps:
+    - uses: actions/checkout@v5
+    - name: Install dependencies
+      run: apk add --no-cache bash
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v4
+    - name: test musl arm64 package
+      run: ./script/unpack-and-test.sh
+      env:
+        BINARY_ARCH: arm64
+        BINARY_OS: linux-musl
