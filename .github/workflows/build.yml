@@ -90,16 +90,18 @@ jobs:
   test-linux-musl-arm:
     needs: [build]
     runs-on: ubuntu-22.04-arm
-    container:
-      image: alpine:latest
     steps:
     - uses: actions/checkout@v5
-    - name: Install dependencies
-      run: apk add --no-cache bash
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v4
-    - name: test musl arm64 package
-      run: ./script/unpack-and-test.sh
-      env:
-        BINARY_ARCH: arm64
-        BINARY_OS: linux-musl
+    - name: Test in alpine container
+      run: |
+        docker run --rm \
+          -v "${{ github.workspace }}:/workspace" \
+          -e BINARY_ARCH=arm64 \
+          -e BINARY_OS=linux-musl \
+          alpine:latest /bin/sh -c "
+            apk add --no-cache bash && \
+            cd /workspace && \
+            ./script/unpack-and-test.sh
+          "
