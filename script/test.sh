@@ -25,6 +25,10 @@ if [ "$BINARY_OS" == "" ] || [ "$BINARY_ARCH" == "" ] ; then
         BINARY_OS=linux
         BINARY_ARCH=x86_64
         ;;
+    "MINGW64*ARM64"*)
+        BINARY_OS=windows
+        BINARY_ARCH=arm64
+        ;;
     "Windows"* | "MINGW64"*)
         BINARY_OS=windows
         BINARY_ARCH=x86_64
@@ -35,7 +39,8 @@ if [ "$BINARY_OS" == "" ] || [ "$BINARY_ARCH" == "" ] ; then
         ;;
     esac;
 fi
-
+echo BINARY_OS = $BINARY_OS
+echo BINARY_ARCH = $BINARY_ARCH
 if [ "$BINARY_OS" != "windows" ] ; then PATH_SEPERATOR=/ ; else PATH_SEPERATOR=\\; fi
 PATH_TO_BIN=.${PATH_SEPERATOR}pkg${PATH_SEPERATOR}pact${PATH_SEPERATOR}bin${PATH_SEPERATOR}
 

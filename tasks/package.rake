@@ -11,6 +11,12 @@ RUBY_MAJOR_VERSION = TRAVELING_RB_VERSION.split(".").first.to_i
 RUBY_MINOR_VERSION = TRAVELING_RB_VERSION.split(".")[1].to_i
 JSON_VERSION = '2.16.0'
 BIGDECIMAL_VERSION = '3.3.1'
+  # Native extensions
+NATIVE_GEMS = [
+  "json-#{JSON_VERSION}",
+  "bigdecimal-#{BIGDECIMAL_VERSION}"
+]
+
 desc "Package pact-standalone for Linux, MacOS, Windows (x86_64 and arm64)"
 task :package => [
   'package:linux:x86_64',
@@ -46,8 +52,6 @@ namespace :package do
     desc "Package pact-standalone for Linux x86_64"
     task :x86_64 => [:bundle_install, 
     "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-x86_64.tar.gz",
-    "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-x86_64-json-#{JSON_VERSION}.tar.gz", 
-    "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
     ] do
       create_package(TRAVELING_RUBY_VERSION, "linux-x86_64", "linux-x86_64", :unix)
     end
@@ -55,8 +59,6 @@ namespace :package do
     desc "Package pact-standalone for Linux arm64"
     task :arm64 => [:bundle_install, 
     "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-arm64.tar.gz",
-    "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-arm64-json-#{JSON_VERSION}.tar.gz", 
-    "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
     ] do
       create_package(TRAVELING_RUBY_VERSION, "linux-arm64", "linux-arm64", :unix)
     end
@@ -65,8 +67,6 @@ namespace :package do
       desc "Package pact-standalone for Linux musl x86_64"
       task :x86_64 => [:bundle_install, 
       "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-musl-x86_64.tar.gz",
-      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-musl-x86_64-json-#{JSON_VERSION}.tar.gz", 
-      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-musl-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
       ] do
         create_package(TRAVELING_RUBY_VERSION, "linux-musl-x86_64", "linux-musl-x86_64", :unix)
       end
@@ -74,8 +74,6 @@ namespace :package do
       desc "Package pact-standalone for Linux musl arm64"
       task :arm64 => [:bundle_install, 
       "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-linux-musl-arm64.tar.gz",
-      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-musl-arm64-json-#{JSON_VERSION}.tar.gz", 
-      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-musl-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
       ] do
         create_package(TRAVELING_RUBY_VERSION, "linux-musl-arm64", "linux-musl-arm64", :unix)
       end
@@ -86,8 +84,6 @@ namespace :package do
   desc "Package pact-standalone for MacOS x86_64"
   task :x86_64 => [:bundle_install, 
   "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-macos-x86_64.tar.gz",
-  "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-x86_64-json-#{JSON_VERSION}.tar.gz", 
-  "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
   ] do
     create_package(TRAVELING_RUBY_VERSION, "macos-x86_64", "macos-x86_64", :unix)
     end
@@ -95,8 +91,6 @@ namespace :package do
   desc "Package pact-standalone for MacOS arm64"
   task :arm64 => [:bundle_install, 
   "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-macos-arm64.tar.gz", 
-  "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-arm64-json-#{JSON_VERSION}.tar.gz", 
-  "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
   ] do
     create_package(TRAVELING_RUBY_VERSION, "macos-arm64", "macos-arm64", :unix)
     end
@@ -106,8 +100,6 @@ namespace :package do
     task :x86_64 => [
       :bundle_install,
       "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-x86_64.tar.gz",
-      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-x86_64-json-#{JSON_VERSION}.tar.gz",
-      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
     ] do
       create_package(TRAVELING_RUBY_VERSION, "windows-x86_64", "windows-x86_64", :windows)
     end
@@ -115,8 +107,6 @@ namespace :package do
     task :arm64 => [
       :bundle_install,
       "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-arm64.tar.gz",
-      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-arm64-json-#{JSON_VERSION}.tar.gz",
-      "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz"
       ] do
       create_package(TRAVELING_RUBY_VERSION, "windows-arm64", "windows-arm64", :windows)
     end
@@ -131,13 +121,13 @@ namespace :package do
     sh "mkdir -p build/tmp"
     sh "cp packaging/Gemfile packaging/Gemfile.lock build/tmp/"
     sh "mkdir -p build/tmp/lib/pact/mock_service"
-    # sh "cp lib/pact/mock_service/version.rb build/tmp/lib/pact/mock_service/version.rb"
     Bundler.with_unbundled_env do
       sh "cd build/tmp && env bundle config set --local path '../vendor' && env BUNDLE_DEPLOYMENT=true bundle install --verbose"
       generate_readme
     end
     sh "rm -rf build/tmp"
     sh "rm -rf build/vendor/*/*/cache/*"
+    sh "rm -rf build/vendor/ruby/*/extensions" # remove host built extensions
   end
 
   task :generate_readme do
@@ -181,55 +171,6 @@ file "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-windows-arm64.tar.gz" do
   download_runtime(TRAVELING_RUBY_VERSION, "windows-arm64")
 end
 
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-arm64-json-#{JSON_VERSION}.tar.gz" do
-  download_native_extension('linux-arm64', "json-#{JSON_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-x86_64-json-#{JSON_VERSION}.tar.gz" do
-  download_native_extension('linux-x86_64', "json-#{JSON_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-musl-arm64-json-#{JSON_VERSION}.tar.gz" do
-  download_native_extension('linux-musl-arm64', "json-#{JSON_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-musl-x86_64-json-#{JSON_VERSION}.tar.gz" do
-  download_native_extension('linux-musl-x86_64', "json-#{JSON_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-arm64-json-#{JSON_VERSION}.tar.gz" do
-  download_native_extension('macos-arm64', "json-#{JSON_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-x86_64-json-#{JSON_VERSION}.tar.gz" do
-  download_native_extension('macos-x86_64', "json-#{JSON_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-x86_64-json-#{JSON_VERSION}.tar.gz" do
-  download_native_extension('windows-x86_64', "json-#{JSON_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-arm64-json-#{JSON_VERSION}.tar.gz" do
-  download_native_extension('windows-arm64', "json-#{JSON_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
-  download_native_extension('linux-arm64', "bigdecimal-#{BIGDECIMAL_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
-  download_native_extension('linux-x86_64', "bigdecimal-#{BIGDECIMAL_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-musl-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
-  download_native_extension('linux-musl-arm64', "bigdecimal-#{BIGDECIMAL_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-linux-musl-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
-  download_native_extension('linux-musl-x86_64', "bigdecimal-#{BIGDECIMAL_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
-  download_native_extension('macos-arm64', "bigdecimal-#{BIGDECIMAL_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-macos-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
-  download_native_extension('macos-x86_64', "bigdecimal-#{BIGDECIMAL_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-x86_64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
-  download_native_extension('windows-x86_64', "bigdecimal-#{BIGDECIMAL_VERSION}")
-end
-file "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-windows-arm64-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz" do
-  download_native_extension('windows-arm64', "bigdecimal-#{BIGDECIMAL_VERSION}")
-end
-
 def create_package(version, source_target, package_target, os_type)
   package_dir = "#{PACKAGE_NAME}"
   package_name = "#{PACKAGE_NAME}-#{VERSION}-#{package_target}"
@@ -240,7 +181,6 @@ def create_package(version, source_target, package_target, os_type)
   sh "cp build/README.md #{package_dir}"
   sh "cp packaging/pact*.rb #{package_dir}/lib/app"
 
-  # sh "cp -pR lib #{package_dir}/lib/app"
   sh "mkdir #{package_dir}/lib/ruby"
   sh "tar -xzf build/traveling-ruby-#{version}-#{source_target}.tar.gz -C #{package_dir}/lib/ruby"
   # From https://curl.se/docs/caextract.html
@@ -267,8 +207,8 @@ def create_package(version, source_target, package_target, os_type)
   else
     sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
   end
-    sh "tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{source_target}-json-#{JSON_VERSION}.tar.gz " + "-C #{package_dir}/lib/vendor/ruby"
-    sh "tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{source_target}-bigdecimal-#{BIGDECIMAL_VERSION}.tar.gz " + "-C #{package_dir}/lib/vendor/ruby"
+
+  download_and_unpack_ext(package_dir, source_target, NATIVE_GEMS)
   remove_unnecessary_files package_dir
 
   if !ENV['DIR_ONLY']
@@ -374,18 +314,11 @@ def download_runtime(version, target)
      "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-#{version}-#{target}.tar.gz"
 end
 
-def download_native_extension(target, gem_name_and_version)
-  sh "curl -L --fail -o build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{target}-#{gem_name_and_version}.tar.gz " +
-     "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{target}-#{gem_name_and_version}.tar.gz"
-end
-
 def download_and_unpack_ext(package_dir, package_target, native_gems)
-
   native_gems.each do |native_gem|
-    sh "cd #{package_dir}/lib/ruby/lib/ruby/gems && \
-      curl -L -O --fail https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz && \
-    ls && pwd && \
-    tar xzfv traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz && \
-    rm traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz"
+    sh "curl -L --fail https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz \
+    -o build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz && \
+    tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz -C #{package_dir}/lib/vendor/ruby && \
+    rm build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz"
   end
 end
