@@ -49,7 +49,7 @@ ls
 tar xvf *$BINARY_OS-$BINARY_ARCH.tar.gz
 if [ "$BINARY_OS" != "windows" ] ; then PATH_SEPERATOR=/ ; else PATH_SEPERATOR=\\; fi
 PATH_TO_BIN=.${PATH_SEPERATOR}pact${PATH_SEPERATOR}bin${PATH_SEPERATOR}
-PACT_TO_RUBY_BIN=.${PATH_SEPERATOR}pact${PATH_SEPERATOR}lib${PATH_SEPERATOR}ruby${PATH_SEPERATOR}bin${PATH_SEPERATOR}
+PACT_TO_RUBY_BINS=.${PATH_SEPERATOR}pact${PATH_SEPERATOR}lib${PATH_SEPERATOR}ruby${PATH_SEPERATOR}bin${PATH_SEPERATOR}
 
 tools=(
 #   pact-broker
@@ -60,8 +60,9 @@ tools=(
 #   pactflow
 )
 # ruby version check
-ruby_version=$(${PACT_TO_RUBY_BIN}ruby.bat -e 'print RUBY_VERSION')
+ruby_version=$(${PACT_TO_RUBY_BINS}ruby.bat -e 'print RUBY_VERSION')
 echo "Ruby version: $ruby_version"
+${PACT_TO_RUBY_BINS}gem.bat list
 
 test_cmd=""
 for tool in ${tools[@]}; do
