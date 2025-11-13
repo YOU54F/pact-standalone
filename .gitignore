@@ -23,7 +23,6 @@ spec/pacts
 .rakeTasks
 *~
 .ruby-gemset
-.ruby-version
 log
 .idea
 reports

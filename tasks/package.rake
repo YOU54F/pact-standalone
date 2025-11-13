@@ -274,7 +274,8 @@ def create_package(version, source_target, package_target, os_type)
   if !ENV['DIR_ONLY']
     sh "mkdir -p pkg"
 
-    sh "tar -czf pkg/#{package_name}.tar.gz #{package_dir}"
+  # https://unix.stackexchange.com/questions/282055/a-lot-of-files-inside-a-tar
+  sh "#{RUBY_PLATFORM =~ /darwin/ ? 'COPYFILE_DISABLE=1' : ''} tar -czf pkg/#{package_name}.tar.gz #{package_dir}"
 
   sh "rm -rf #{package_dir}"
   end
