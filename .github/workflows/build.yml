@@ -24,7 +24,9 @@ jobs:
     - name: Install dependencies
       run: bundle install --jobs 4 --retry 3
     - name: Build
-      run: bundle exec rake package:windows:arm64
+      run: bundle exec rake package
+      env:
+        WITH_NATIVE_EXT: true
     - name: Show standalone packages
       run: ls pkg
     - name: Upload standalone packages
@@ -32,23 +34,23 @@ jobs:
       with:
         name: pkg
         path: pkg
-  # test:
-  #   defaults:
-  #     run:
-  #       shell: ${{ matrix.shell }}
-  #   needs: [build]
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: ["windows-latest", "macos-latest", "ubuntu-latest"]
-  #       shell: ["bash"]
-  #   runs-on: ${{ matrix.os }}
-  #   steps:
-  #   - uses: actions/checkout@v5
-  #   - name: Download all workflow run artifacts
-  #     uses: actions/download-artifact@v4
-  #   - name: test ${{ matrix.os }} package
-  #     run: ./script/unpack-and-test.sh
+  test:
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["windows-latest", "macos-latest", "ubuntu-latest"]
+        shell: ["bash"]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v5
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v4
+    - name: test ${{ matrix.os }} package
+      run: ./script/unpack-and-test.sh
   test-win-arm:
     defaults:
       run:

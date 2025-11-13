@@ -52,22 +52,22 @@ PATH_TO_BIN=.${PATH_SEPERATOR}pact${PATH_SEPERATOR}bin${PATH_SEPERATOR}
 PACT_TO_RUBY_BINS=.${PATH_SEPERATOR}pact${PATH_SEPERATOR}lib${PATH_SEPERATOR}ruby${PATH_SEPERATOR}bin${PATH_SEPERATOR}
 
 tools=(
-#   pact-broker
+  pact-broker
   pact-message
   pact-mock-service
   pact-provider-verifier
   pact-stub-service
-#   pactflow
+  pactflow
 )
 # ruby version check
-ruby_version=$(${PACT_TO_RUBY_BINS}ruby.bat -e 'print RUBY_VERSION')
+if [ "$BINARY_OS" = "windows" ] ; then FILE_EXT=.bat; fi
+ruby_version=$(${PACT_TO_RUBY_BINS}ruby${FILE_EXT} -e 'print RUBY_VERSION')
 echo "Ruby version: $ruby_version"
-${PACT_TO_RUBY_BINS}gem.bat list
+${PACT_TO_RUBY_BINS}gem${FILE_EXT} list
 
 test_cmd=""
 for tool in ${tools[@]}; do
   echo testing $tool
-  if [ "$BINARY_OS" = "windows" ] ; then FILE_EXT=.bat; fi
   if [ "$tool" = "pact-mock-service" ]; then  test_cmd="--help" ; fi
   echo executing ${tool}${FILE_EXT} 
   ${PATH_TO_BIN}${tool}${FILE_EXT} ${test_cmd};

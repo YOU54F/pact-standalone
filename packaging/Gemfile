@@ -4,10 +4,11 @@ gem "pact", "1.67.2"
 gem "pact-message", "0.11.1"
 gem "pact-mock_service", "3.12.3"
 gem "pact-provider-verifier", "1.39.1"
+gem "pact_broker-client", "1.77.0"
 gem "webrick", "1.9.1"
 # pinned to versions available from traveling-ruby
-# gem "json", "2.16.0"
-# gem "bigdecimal", "3.3.1"
+gem "json", "2.16.0"
+gem "bigdecimal", "3.3.1"
 
-gem "json", "2.9.1"
-# gem "bigdecimal", "3.1.8"
+# note - ensure bundler is set to 2.6.9, as windows packaging is not picking up BUNDLER_VERSION from truby
+# and is using the stdgem packaged bundler.

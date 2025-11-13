@@ -2,7 +2,11 @@ GEM
   remote: https://rubygems.org/
   specs:
     awesome_print (1.9.2)
+    base64 (0.3.0)
+    bigdecimal (3.3.1)
+    csv (3.3.5)
     diff-lcs (1.6.2)
+    dig_rb (1.0.1)
     expgen (0.1.1)
       parslet
     faraday (2.14.0)
@@ -14,11 +18,19 @@ GEM
     faraday-retry (2.3.2)
       faraday (~> 2.0)
     find_a_port (1.0.1)
-    json (2.9.1)
+    httparty (0.23.2)
+      csv
+      mini_mime (>= 1.0.0)
+      multi_xml (>= 0.5.2)
+    json (2.16.0)
     jsonpath (1.1.5)
       multi_json
     logger (1.7.0)
+    mini_mime (1.1.5)
+    mize (0.6.1)
     multi_json (1.17.0)
+    multi_xml (0.7.2)
+      bigdecimal (~> 3.1)
     net-http (0.7.0)
       uri
     ostruct (0.6.3)
@@ -67,6 +79,15 @@ GEM
       jsonpath (~> 1.0)
       rainbow (~> 3.1.1)
       string_pattern (~> 2.0)
+    pact_broker-client (1.77.0)
+      base64 (~> 0.2)
+      dig_rb (~> 1.0)
+      httparty (>= 0.21.0, < 1.0.0)
+      ostruct
+      rake (~> 13.0)
+      table_print (~> 1.5)
+      term-ansicolor (~> 1.7)
+      thor (>= 0.20, < 2.0)
     parslet (2.0.0)
     rack (3.2.4)
     rack-proxy (0.7.7)
@@ -80,6 +101,7 @@ GEM
     rackup (2.2.1)
       rack (>= 3)
     rainbow (3.1.1)
+    rake (13.3.1)
     regexp_parser (2.11.3)
     rspec (3.13.2)
       rspec-core (~> 3.13.0)
@@ -98,7 +120,15 @@ GEM
       rspec-core (>= 2, < 4, != 2.12.0)
     string_pattern (2.3.0)
       regexp_parser (~> 2.5, >= 2.5.0)
+    sync (0.5.0)
+    table_print (1.5.7)
+    term-ansicolor (1.11.3)
+      tins (~> 1)
     thor (1.4.0)
+    tins (1.46.0)
+      bigdecimal
+      mize (~> 0.6)
+      sync
     uri (1.1.1)
     webrick (1.9.1)
     zeitwerk (2.7.3)
@@ -121,11 +151,13 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  json (= 2.9.1)
+  bigdecimal (= 3.3.1)
+  json (= 2.16.0)
   pact (= 1.67.2)
   pact-message (= 0.11.1)
   pact-mock_service (= 3.12.3)
   pact-provider-verifier (= 1.39.1)
+  pact_broker-client (= 1.77.0)
   webrick (= 1.9.1)
 
 BUNDLED WITH

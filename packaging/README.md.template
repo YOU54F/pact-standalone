@@ -14,6 +14,7 @@ This version (<%= ENV.fetch('VERSION') %>) of the Pact standalone executables pa
   * pact-mock_service gem <%= Pact::MockService::VERSION %>
   * pact-support gem <%= Pact::Support::VERSION %>
   * pact-provider-verifier gem <%= Pact::ProviderVerifier::VERSION %>
+  * pact_broker-client gem <%= PactBroker::Client::VERSION %>
   * pact-message gem <%= Pact::Message::VERSION %>
 
 Binaries will be extracted into `pact/bin`:
@@ -93,12 +94,14 @@ To connect to a Pact Broker that uses custom SSL cerificates, set the environmen
 #### publish
 
 ```
+<%= pact_publish_usage %>
 ```
 
 <a name="pact-broker-client-can-i-deploy"></a>
 #### can-i-deploy
 
 ```
+<%= pact_broker_can_i_deploy_usage %>
 ```
 
 <a name="pact"></a>
@@ -109,6 +112,7 @@ To connect to a Pact Broker that uses custom SSL cerificates, set the environmen
 #### publish-provider-contract
 
 ```
+<%= pactflow_publish_provider_contract_usage %>
 ```
 
 ### pact
