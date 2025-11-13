@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+source "http://rubygems.org"
+
+# pact-ruby-standalone
+gem "pact"
+gem "pact_broker-client"
+gem "pact-mock_service"
+gem "pact-provider-verifier"
+# pact_broker
+gem "pact_broker"
+gem "sqlite3"
+gem "thin"

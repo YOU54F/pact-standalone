@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+source "http://rubygems.org"
+
+# pact-ffi
+# gem 'httparty', '~> 0.21.0'
+gem 'pact-ffi', '~> 0.0.3'
+gem 'rake', '~> 13.1'
+gem 'rspec', '~> 3.13'
+gem 'net-http', '~> 0.4.1'
+gem 'webrick', '~> 1.8', '>= 1.8.1'

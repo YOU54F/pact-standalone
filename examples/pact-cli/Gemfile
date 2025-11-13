@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+source "http://rubygems.org"
+
+# pact-ruby-standalone
+gem 'pact', '~> 1.64'
+gem 'pact_broker-client', '~> 1.75', '>= 1.75.1'
+gem 'pact-mock_service', '~> 3.11', '>= 3.11.2' # cant upgrade until pact-provider-verifier supports rack 3
+gem 'pact-provider-verifier', '~> 1.38'
