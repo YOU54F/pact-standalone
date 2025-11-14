@@ -96,7 +96,7 @@ done
 ${PATH_TO_BIN}pact-broker${FILE_EXT} publish ${PATH_TO_BIN}../lib/app/*.json --broker-base-url http://localhost:9292/ --consumer-app-version 1.0.0
 
 if [ "$BINARY_OS" = "windows" ]; then
-  taskkill /F /PID $(cat broker.pid)
+  taskkill //F //PID "$(cat broker.pid)"
 else
   kill $(cat broker.pid)
 fi
