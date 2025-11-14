@@ -79,3 +79,9 @@ for tool in ${tools[@]}; do
   echo executing ${tool}${FILE_EXT} 
   ${PATH_TO_BIN}${tool}${FILE_EXT} ${test_cmd};
 done
+
+${PATH_TO_BIN}pact-broker-app${FILE_EXT} -D -P broker.pid
+sleep 10
+curl http://localhost:9292/
+${PATH_TO_BIN}pact-broker${FILE_EXT} publish ${PATH_TO_BIN}../lib/app/*.json --broker-base-url http://localhost:9292/ --consumer-app-version 1.0.0
+kill $(cat broker.pid)
