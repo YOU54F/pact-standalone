@@ -63,36 +63,5 @@ rm -rf pact
 ls
 
 tar xvf *$BINARY_OS-$BINARY_ARCH.tar.gz
-if [ "$BINARY_OS" != "windows" ] ; then PATH_SEPERATOR=/ ; else PATH_SEPERATOR=\\; fi
-PATH_TO_BIN=.${PATH_SEPERATOR}pact${PATH_SEPERATOR}bin${PATH_SEPERATOR}
-PACT_TO_RUBY_BINS=.${PATH_SEPERATOR}pact${PATH_SEPERATOR}lib${PATH_SEPERATOR}ruby${PATH_SEPERATOR}bin${PATH_SEPERATOR}
-
-tools=(
-  pact-broker
-  pact-message
-  pact-mock-service
-  pact-provider-verifier
-  pact-stub-service
-  pactflow
-  pact-broker-app
-)
-# ruby version check
-if [ "$BINARY_OS" = "windows" ] ; then FILE_EXT=.bat; fi
-ruby_version=$(${PACT_TO_RUBY_BINS}ruby${FILE_EXT} -e 'print RUBY_VERSION')
-echo "Ruby version: $ruby_version"
-${PACT_TO_RUBY_BINS}gem${FILE_EXT} list
-
-test_cmd=""
-for tool in ${tools[@]}; do
-  echo testing $tool
-  if [ "$tool" = "pact-mock-service" ]; then  test_cmd="--help" ; fi
-  if [ "$tool" = "pact-broker-app" ]; then  test_cmd="--version" ; fi
-  echo executing ${tool}${FILE_EXT} 
-  ${PATH_TO_BIN}${tool}${FILE_EXT} ${test_cmd};
-done
-
-${PATH_TO_BIN}pact-broker-app${FILE_EXT} -D -P broker.pid
-sleep 10
-curl http://localhost:9292/
-${PATH_TO_BIN}pact-broker${FILE_EXT} publish ${PATH_TO_BIN}../lib/app/*.json --broker-base-url http://localhost:9292/ --consumer-app-version 1.0.0
-kill $(cat broker.pid)
+cd ..
+./script/test.sh
