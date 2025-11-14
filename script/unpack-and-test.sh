@@ -74,6 +74,7 @@ tools=(
   pact-provider-verifier
   pact-stub-service
   pactflow
+  pact-broker-app
 )
 # ruby version check
 if [ "$BINARY_OS" = "windows" ] ; then FILE_EXT=.bat; fi
@@ -85,6 +86,7 @@ test_cmd=""
 for tool in ${tools[@]}; do
   echo testing $tool
   if [ "$tool" = "pact-mock-service" ]; then  test_cmd="--help" ; fi
+  if [ "$tool" = "pact-broker-app" ]; then  test_cmd="--version" ; fi
   echo executing ${tool}${FILE_EXT} 
   ${PATH_TO_BIN}${tool}${FILE_EXT} ${test_cmd};
 done
