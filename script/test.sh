@@ -86,7 +86,17 @@ else
   ${PATH_TO_BIN}pact-broker-app${FILE_EXT} -D -P broker.pid
 fi
 
-sleep 10
-curl http://localhost:9292/
+for i in {1..30}; do
+  if curl -s http://localhost:9292/ >/dev/null; then
+    break
+  fi
+  sleep 1
+done
+
 ${PATH_TO_BIN}pact-broker${FILE_EXT} publish ${PATH_TO_BIN}../lib/app/*.json --broker-base-url http://localhost:9292/ --consumer-app-version 1.0.0
-kill $(cat broker.pid)
+
+if [ "$BINARY_OS" = "windows" ]; then
+  taskkill /F /PID $(cat broker.pid)
+else
+  kill $(cat broker.pid)
+fi
