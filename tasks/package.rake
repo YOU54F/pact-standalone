@@ -9,12 +9,37 @@ TRAVELING_RB_VERSION = TRAVELING_RUBY_VERSION.split("-").last
 RUBY_COMPAT_VERSION = TRAVELING_RB_VERSION.split(".").first(2).join(".") + ".0"
 RUBY_MAJOR_VERSION = TRAVELING_RB_VERSION.split(".").first.to_i
 RUBY_MINOR_VERSION = TRAVELING_RB_VERSION.split(".")[1].to_i
-JSON_VERSION = '2.16.0'
 BIGDECIMAL_VERSION = '3.3.1'
-  # Native extensions
+DATE_VERSION = '3.5.0'
+EVENTMACHINE_VERSION = '1.2.7'
+JSON_VERSION = '2.16.0'
+NIO4R_VERSION = '2.7.5'
+NOKOGIRI_VERSION = '1.18.10'
+PG_VERSION = '1.6.2'
+PSYCH_VERSION = '5.2.6'
+PUMA_VERSION = '7.1.0'
+RACC_VERSION = '1.8.1'
+REDCARPET_VERSION = '3.6.1'
+STRINGIO_VERSION = '3.1.7'
+SQLITE3_VERSION = '2.8.0'
+THIN_VERSION = '2.0.1'
+
+# Native extensions
 NATIVE_GEMS = [
+  "bigdecimal-#{BIGDECIMAL_VERSION}",
+  "date-#{DATE_VERSION}",
+  "eventmachine-#{EVENTMACHINE_VERSION}",
   "json-#{JSON_VERSION}",
-  "bigdecimal-#{BIGDECIMAL_VERSION}"
+  "nio4r-#{NIO4R_VERSION}",
+  "nokogiri-#{NOKOGIRI_VERSION}",
+  "pg-#{PG_VERSION}",
+  "psych-#{PSYCH_VERSION}",
+  "puma-#{PUMA_VERSION}",
+  "racc-#{RACC_VERSION}",
+  "redcarpet-#{REDCARPET_VERSION}",
+  "stringio-#{STRINGIO_VERSION}",
+  "sqlite3-#{SQLITE3_VERSION}",
+  "thin-#{THIN_VERSION}",
 ]
 
 desc "Package pact-standalone for Linux, MacOS, Windows (x86_64 and arm64)"
@@ -181,6 +206,10 @@ def create_package(version, source_target, package_target, os_type)
   sh "cp build/README.md #{package_dir}"
   sh "cp packaging/pact*.rb #{package_dir}/lib/app"
 
+  # copy pact broker files
+  sh "cp packaging/config.ru #{package_dir}/lib/app/"
+  sh "cp packaging/GettingStartedOrderWeb-GettingStartedOrderApi.json #{package_dir}/lib/app/"
+
   sh "mkdir #{package_dir}/lib/ruby"
   sh "tar -xzf build/traveling-ruby-#{version}-#{source_target}.tar.gz -C #{package_dir}/lib/ruby"
   # From https://curl.se/docs/caextract.html
@@ -199,6 +228,20 @@ def create_package(version, source_target, package_target, os_type)
 
   sh "cp -pR build/vendor #{package_dir}/lib/"
   sh "cp packaging/Gemfile packaging/Gemfile.lock #{package_dir}/lib/vendor/"
+
+    # If packaging for Windows, patch Gemfile.lock for nokogiri platform as we are building platform specific gems with rake-compiler-dock
+    if os_type == :windows
+      lockfile = "#{package_dir}/lib/vendor/Gemfile.lock"
+      if File.exist?(lockfile)
+      content = File.read(lockfile)
+      if content =~ /^    nokogiri \(#{NOKOGIRI_VERSION}\)/
+        arch = package_target.include?("arm64") ? "-aarch64-mingw-ucrt" : "-x64-mingw-ucrt"
+        patched = content.gsub(/^    nokogiri \(#{NOKOGIRI_VERSION}\)/, "    nokogiri (#{NOKOGIRI_VERSION}#{arch})")
+        File.write(lockfile, patched)
+      end
+      end
+    end
+  
   sh "mkdir #{package_dir}/lib/vendor/.bundle"
   sh "cp packaging/bundler-config #{package_dir}/lib/vendor/.bundle/config"
 
@@ -208,8 +251,9 @@ def create_package(version, source_target, package_target, os_type)
     sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
   end
 
-  download_and_unpack_ext(package_dir, source_target, NATIVE_GEMS) if ENV['WITH_NATIVE_EXT']
   remove_unnecessary_files package_dir
+  # ensure old native extensions are removed before adding the portable traveling-ruby ones
+  download_and_unpack_ext(package_dir, source_target, NATIVE_GEMS) if ENV['WITH_NATIVE_EXT']
 
   if !ENV['DIR_ONLY']
     sh "mkdir -p pkg"
@@ -258,9 +302,10 @@ def remove_unnecessary_files package_dir
   sh "rm -rf #{package_dir}/lib/vendor/ruby/*/gems/*/.travis.yml"
 
   # Remove leftover native extension sources and compilation objects"
+  # make sure this in run before installing native extensions from traveling-ruby
   sh "rm -f #{package_dir}/lib/vendor/ruby/*/gems/*/ext/Makefile"
   sh "rm -f #{package_dir}/lib/vendor/ruby/*/gems/*/ext/*/Makefile"
-  sh "rm -f #{package_dir}/lib/vendor/ruby/*/gems/*/ext/*/tmp"
+  sh "rm -rf #{package_dir}/lib/vendor/ruby/*/gems/*/ext/*/tmp"
   sh "find #{package_dir}/lib/vendor/ruby -name '*.c' | xargs rm -f"
   sh "find #{package_dir}/lib/vendor/ruby -name '*.cpp' | xargs rm -f"
   sh "find #{package_dir}/lib/vendor/ruby -name '*.h' | xargs rm -f"
@@ -269,9 +314,23 @@ def remove_unnecessary_files package_dir
   sh "find #{package_dir}/lib/vendor/ruby/*/gems -name '*.o' | xargs rm -f"
   sh "find #{package_dir}/lib/vendor/ruby/*/gems -name '*.so' | xargs rm -f"
   sh "find #{package_dir}/lib/vendor/ruby/*/gems -name '*.bundle' | xargs rm -f"
+  sh "find #{package_dir} -name '*.dSYM' | xargs rm -rf"
   sh "find #{package_dir}/lib/vendor/ruby/*/extensions -name '*.o' | xargs rm -f"
   sh "find #{package_dir}/lib/vendor/ruby/*/extensions -name '*.so' | xargs rm -f"
   sh "find #{package_dir}/lib/vendor/ruby/*/extensions -name '*.bundle' | xargs rm -f"
+
+  # Remove .so and .bundle files for native gems in architecture-specific directories
+  (NATIVE_GEMS - ["json-#{JSON_VERSION}"]).each do |native_gem|
+    gem_name = native_gem.split('-').first
+    sh "find #{package_dir}/lib/ruby/lib/ruby/*/*/#{gem_name}* -name '*.so' -delete || true"
+    sh "find #{package_dir}/lib/ruby/lib/ruby/*/*/#{gem_name}* -name '*.bundle' -delete || true"
+  end
+
+  # Remove string_pattern Spanish data directory
+  sh "rm -rf #{package_dir}/lib/vendor/ruby/#{RUBY_COMPAT_VERSION}/gems/string_pattern-*/data/spanish"
+
+  # Remove sqlite3 ports/archives directory
+  sh "rm -rf #{package_dir}/lib/vendor/ruby/#{RUBY_COMPAT_VERSION}/gems/sqlite3-#{SQLITE3_VERSION}/ports/archives"
 
   # Remove Java files. They're only used for JRuby support"
   sh "find #{package_dir}/lib/vendor/ruby -name '*.java' | xargs rm -f"
@@ -281,9 +340,30 @@ def remove_unnecessary_files package_dir
   sh "rm -rf #{package_dir}/lib/ruby/lib/ruby/*/rdoc*"
 
   # Website files
-  sh "find #{package_dir}/lib/vendor/ruby -name '*.html' | xargs rm -f"
-  sh "find #{package_dir}/lib/vendor/ruby -name '*.css' | xargs rm -f"
-  sh "find #{package_dir}/lib/vendor/ruby -name '*.svg' | xargs rm -f"
+  sh "find #{package_dir}/lib/vendor/ruby -name '*.html'"
+  sh "find #{package_dir}/lib/vendor/ruby -name '*.css'"
+  sh "find #{package_dir}/lib/vendor/ruby -name '*.svg'"
+  require 'pathname'
+
+  # Exclude pact_broker gem directory from file removal
+  # due to public folder containing required website assets
+  pact_broker_gem_dir = Pathname.new("#{package_dir}/lib/vendor/ruby/#{RUBY_COMPAT_VERSION}/gems").children.find do |child|
+    child.basename.to_s =~ /\Apact_broker-\d/ && !child.basename.to_s.start_with?("pact_broker-client")
+  end
+
+  exclude_path = pact_broker_gem_dir ? pact_broker_gem_dir.to_s : nil
+  puts "Excluding pact_broker gem directory from HTML/CSS/SVG removal: #{exclude_path}"
+  [
+    '*.html',
+    '*.css',
+    '*.svg'
+  ].each do |pattern|
+    if exclude_path
+      sh "find #{package_dir}/lib/vendor/ruby -name '#{pattern}' ! -path '#{exclude_path}/*' | xargs rm -f"
+    else
+      sh "find #{package_dir}/lib/vendor/ruby -name '#{pattern}' | xargs rm -f"
+    end
+  end
 
   # Remove unused Gemfile.lock files
   sh "find #{package_dir}/lib/vendor/ruby -name 'Gemfile.lock' | xargs rm -f"
@@ -316,9 +396,27 @@ end
 
 def download_and_unpack_ext(package_dir, package_target, native_gems)
   native_gems.each do |native_gem|
-    sh "curl -L --fail https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz \
-    -o build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz && \
-    tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz -C #{package_dir}/lib/vendor/ruby && \
-    rm build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz"
+    is_windows = package_target.include?("windows")
+    is_nokogiri = native_gem.start_with?("nokogiri-")
+    tarball = "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz"
+    url = "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz"
+
+    sh "curl -L --fail #{url} -o #{tarball}"
+
+    if is_windows && is_nokogiri
+      gem_dir = "#{package_dir}/lib/vendor/ruby/#{RUBY_COMPAT_VERSION}/gems"
+      spec_dir = "#{package_dir}/lib/vendor/ruby/#{RUBY_COMPAT_VERSION}/specifications"
+      sh "mkdir -p #{gem_dir} #{spec_dir}"
+      # Unpack gem contents
+      sh "rm -rf #{gem_dir}/#{native_gem}"
+      sh "mkdir -p #{gem_dir}/#{native_gem}"
+      sh "tar -xzf #{tarball} --strip-components=1 -C #{gem_dir}/#{native_gem} 'nokogiri-*'"
+      # Unpack gemspec
+      sh "tar -xzf #{tarball} --strip-components=0 -C #{spec_dir} 'nokogiri-*.gemspec'"
+    else
+      sh "tar -xzf #{tarball} -C #{package_dir}/lib/vendor/ruby"
+    end
+
+    sh "rm #{tarball}"
   end
 end

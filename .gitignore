@@ -32,3 +32,4 @@ vendor/bundle/
 pact
 .DS_Store
 !examples/pact
+*.sqlite3

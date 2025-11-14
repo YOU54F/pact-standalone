@@ -12,3 +12,17 @@ gem "bigdecimal", "3.3.1"
 
 # note - ensure bundler is set to 2.6.9, as windows packaging is not picking up BUNDLER_VERSION from truby
 # and is using the stdgem packaged bundler.
+gem 'pact_broker', "2.117.1"
+gem "padrino-core", "0.16.0.pre3"
+gem "sqlite3", "2.8.0", force_ruby_platform: true
+gem "thin", "2.0.1"
+gem "puma", "7.1.0"
+gem "nokogiri", "1.18.10", force_ruby_platform: true
+gem "eventmachine", "1.2.7"
+gem "redcarpet", "3.6.1"
+gem "nio4r", "2.7.5"
+gem "psych", "5.2.6"
+gem "racc", "1.8.1"
+gem "date", "3.5.0"
+gem "stringio", "3.1.7"
+gem "pg", "1.6.2", force_ruby_platform: true
