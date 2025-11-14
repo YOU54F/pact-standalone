@@ -78,7 +78,7 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     - name: Install dependencies
-      run: apk add --no-cache bash
+      run: apk add --no-cache bash curl
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v4
     - name: test musl package
@@ -101,7 +101,7 @@ jobs:
           -e BINARY_ARCH=arm64 \
           -e BINARY_OS=linux-musl \
           alpine:latest /bin/sh -c "
-            apk add --no-cache bash && \
+            apk add --no-cache bash curl && \
             cd /workspace && \
             ./script/unpack-and-test.sh
           "
