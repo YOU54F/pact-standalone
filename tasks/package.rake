@@ -410,9 +410,10 @@ def download_and_unpack_ext(package_dir, package_target, native_gems)
       # Unpack gem contents
       sh "rm -rf #{gem_dir}/#{native_gem}"
       sh "mkdir -p #{gem_dir}/#{native_gem}"
-      sh "tar -xzf #{tarball} --strip-components=1 -C #{gem_dir}/#{native_gem} 'nokogiri-*'"
+      wildcards_flag = RUBY_PLATFORM =~ /linux/ ? "--wildcards" : ""
+      sh "tar -xzf #{tarball} #{wildcards_flag} --strip-components=1 -C #{gem_dir}/#{native_gem} 'nokogiri-*'"
       # Unpack gemspec
-      sh "tar -xzf #{tarball} --strip-components=0 -C #{spec_dir} 'nokogiri-*.gemspec'"
+      sh "tar -xzf #{tarball} #{wildcards_flag} --strip-components=0 -C #{spec_dir} 'nokogiri-*.gemspec'"
     else
       sh "tar -xzf #{tarball} -C #{package_dir}/lib/vendor/ruby"
     end
