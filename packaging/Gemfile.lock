@@ -88,6 +88,8 @@ GEM
     mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
     mutex_m (0.3.0)
+    mysql2 (0.5.7)
+      bigdecimal
     net-http (0.8.0)
       uri (>= 0.11.1)
     nio4r (2.7.5)
@@ -273,7 +275,7 @@ GEM
       rack (>= 1, < 4)
     thor (1.4.0)
     tilt (2.6.1)
-    tins (1.46.0)
+    tins (1.47.0)
       bigdecimal
       mize (~> 0.6)
       sync
@@ -311,6 +313,7 @@ DEPENDENCIES
   date (= 3.5.0)
   eventmachine (= 1.2.7)
   json (= 2.16.0)
+  mysql2 (= 0.5.7)
   nio4r (= 2.7.5)
   nokogiri (= 1.18.10)
   pact (= 1.67.2)

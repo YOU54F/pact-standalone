@@ -17,6 +17,7 @@ NATIVE_GEM_VERSIONS = {
   date: '3.5.0',
   eventmachine: '1.2.7',
   json: '2.16.0',
+  mysql2: '0.5.7',
   nio4r: '2.7.5',
   nokogiri: '1.18.10',
   pg: '1.6.2',
@@ -62,7 +63,7 @@ end
 PLATFORMS.each do |plat|
   desc "Package pact-standalone for #{platform_name(plat)}"
   task package_task_name(plat) => [ :bundle_install, tarball_name(plat) ] do
-    create_package(TRAVELING_RUBY_VERSION, platform_name(plat), platform_name(plat), plat[:os] == :windows ? :windows : :unix)
+    create_package(TRAVELING_RUBY_VERSION, platform_name(plat), plat[:os] == :windows ? :windows : :unix)
   end
 
   file tarball_name(plat) do
@@ -107,9 +108,9 @@ task :generate_readme do
   end
 end
 
-def create_package(version, source_target, package_target, os_type)
+def create_package(version, target, os_type)
   package_dir = "#{PACKAGE_NAME}"
-  package_name = "#{PACKAGE_NAME}-#{VERSION}-#{package_target}"
+  package_name = "#{PACKAGE_NAME}-#{VERSION}-#{target}"
   sh "rm -rf #{package_dir}"
   sh "mkdir #{package_dir}"
   sh "mkdir -p #{package_dir}/lib/app"
@@ -122,7 +123,7 @@ def create_package(version, source_target, package_target, os_type)
   sh "cp packaging/GettingStartedOrderWeb-GettingStartedOrderApi.json #{package_dir}/lib/app/"
 
   sh "mkdir #{package_dir}/lib/ruby"
-  sh "tar -xzf build/traveling-ruby-#{version}-#{source_target}.tar.gz -C #{package_dir}/lib/ruby"
+  sh "tar -xzf build/traveling-ruby-#{version}-#{target}.tar.gz -C #{package_dir}/lib/ruby"
   # From https://curl.se/docs/caextract.html
   sh "cp packaging/cacert.pem #{package_dir}/lib/ruby/lib/ca-bundle.crt"
 
@@ -146,7 +147,7 @@ def create_package(version, source_target, package_target, os_type)
       if File.exist?(lockfile)
       content = File.read(lockfile)
       if content =~ /^    nokogiri \(#{NATIVE_GEM_VERSIONS[ :nokogiri ]}\)/
-        arch = package_target.include?("arm64") ? "-aarch64-mingw-ucrt" : "-x64-mingw-ucrt"
+        arch = target.include?("arm64") ? "-aarch64-mingw-ucrt" : "-x64-mingw-ucrt"
         patched = content.gsub(/^    nokogiri \(#{NATIVE_GEM_VERSIONS[ :nokogiri ]}\)/, "    nokogiri (#{NATIVE_GEM_VERSIONS[ :nokogiri ]}#{arch})")
         File.write(lockfile, patched)
       end
@@ -156,7 +157,7 @@ def create_package(version, source_target, package_target, os_type)
   sh "mkdir #{package_dir}/lib/vendor/.bundle"
   sh "cp packaging/bundler-config #{package_dir}/lib/vendor/.bundle/config"
 
-  if package_target.include? 'windows'
+  if target.include? 'windows'
     sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
   else
     sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
@@ -164,7 +165,7 @@ def create_package(version, source_target, package_target, os_type)
 
   remove_unnecessary_files package_dir
   # ensure old native extensions are removed before adding the portable traveling-ruby ones
-  download_and_unpack_ext(package_dir, source_target, NATIVE_GEMS) if ENV['WITH_NATIVE_EXT']
+  download_and_unpack_ext(package_dir, target, NATIVE_GEMS) if ENV['WITH_NATIVE_EXT']
 
   if !ENV['DIR_ONLY']
     sh "mkdir -p pkg"
@@ -307,12 +308,12 @@ def download_runtime(version, target)
      "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-#{version}-#{target}.tar.gz"
 end
 
-def download_and_unpack_ext(package_dir, package_target, native_gems)
+def download_and_unpack_ext(package_dir, target, native_gems)
   native_gems.each do |native_gem|
-    is_windows = package_target.include?("windows")
+    is_windows = target.include?("windows")
     is_nokogiri = native_gem.start_with?("nokogiri-")
-    tarball = "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz"
-    url = "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{package_target}-#{native_gem}.tar.gz"
+    tarball = "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{target}-#{native_gem}.tar.gz"
+    url = "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{target}-#{native_gem}.tar.gz"
 
     sh "curl -L --fail #{url} -o #{tarball}"
 
