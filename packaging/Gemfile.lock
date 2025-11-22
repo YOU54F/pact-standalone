@@ -260,7 +260,7 @@ GEM
       mini_portile2 (~> 2.8.0)
     string_pattern (2.3.0)
       regexp_parser (~> 2.5, >= 2.5.0)
-    stringio (3.1.7)
+    stringio (3.1.8)
     sucker_punch (3.2.0)
       concurrent-ruby (~> 1.0)
     sync (0.5.0)
@@ -329,7 +329,7 @@ DEPENDENCIES
   racc (= 1.8.1)
   redcarpet (= 3.6.1)
   sqlite3 (= 2.8.0)
-  stringio (= 3.1.7)
+  stringio (= 3.1.8)
   thin (= 2.0.1)
   webrick (= 1.9.1)
 

@@ -24,6 +24,6 @@ gem "nio4r", "2.7.5"
 gem "psych", "5.2.6"
 gem "racc", "1.8.1"
 gem "date", "3.5.0"
-gem "stringio", "3.1.7"
+gem "stringio", "3.1.8"
 gem "pg", "1.6.2", force_ruby_platform: true
 gem "mysql2", "0.5.7", force_ruby_platform: true

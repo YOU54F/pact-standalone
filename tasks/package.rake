@@ -1,10 +1,9 @@
 
-# For Bundler.with_unbundled_env
 require 'bundler/setup'
 
 PACKAGE_NAME = "pact"
 VERSION = File.read('VERSION').strip
-TRAVELING_RUBY_VERSION = "20251107-3.4.7"
+TRAVELING_RUBY_VERSION = "20251122-3.4.7"
 TRAVELING_RUBY_PKG_DATE = TRAVELING_RUBY_VERSION.split("-").first
 TRAVELING_RB_VERSION = TRAVELING_RUBY_VERSION.split("-").last
 RUBY_COMPAT_VERSION = TRAVELING_RB_VERSION.split(".").first(2).join(".") + ".0"
@@ -25,7 +24,7 @@ NATIVE_GEM_VERSIONS = {
   puma: '7.1.0',
   racc: '1.8.1',
   redcarpet: '3.6.1',
-  stringio: '3.1.7',
+  stringio: '3.1.8',
   sqlite3: '2.8.0',
   thin: '2.0.1',
 }
@@ -61,7 +60,7 @@ end
 
 # Generate all package tasks and file rules
 PLATFORMS.each do |plat|
-  desc "Package pact-standalone for #{platform_name(plat)}"
+  desc "Package #{PACKAGE_NAME} for #{platform_name(plat)}"
   task package_task_name(plat) => [ :bundle_install, tarball_name(plat) ] do
     create_package(TRAVELING_RUBY_VERSION, platform_name(plat), plat[:os] == :windows ? :windows : :unix)
   end
@@ -78,7 +77,7 @@ task "package:linux:musl" => PLATFORMS.select { |p| p[:os] == :linux && p[:musl]
 task "package:linux:glibc" => PLATFORMS.select { |p| p[:os] == :linux && !p[:musl] }.map { |p| package_task_name(p) }
 task "package:macos"   => PLATFORMS.select { |p| p[:os] == :macos }.map { |p| package_task_name(p) }
 
-desc "Package pact-standalone for all platforms"
+desc "Package #{PACKAGE_NAME} for all platforms"
 task :package => PLATFORMS.map { |p| package_task_name(p) }
 
 desc "Install gems to local directory. Usage: rake package:bundle_install[platform] (e.g. linux, windows, macos)"
@@ -89,7 +88,6 @@ task :bundle_install do
   sh "rm -rf build/tmp"
   sh "mkdir -p build/tmp"
   sh "cp packaging/Gemfile packaging/Gemfile.lock build/tmp/"
-  sh "mkdir -p build/tmp/lib/pact/mock_service"
   Bundler.with_unbundled_env do
     sh "cd build/tmp && env bundle config set --local path '../vendor' && env BUNDLE_DEPLOYMENT=true bundle install --verbose"
     generate_readme
@@ -97,6 +95,9 @@ task :bundle_install do
   sh "rm -rf build/tmp"
   sh "rm -rf build/vendor/*/*/cache/*"
   sh "rm -rf build/vendor/ruby/*/extensions" # remove host built extensions
+  sh "find build/vendor/ruby/*/gems -name '*.so' | xargs rm -f"
+  sh "find build/vendor/ruby/*/gems -name '*.bundle' | xargs rm -f"
+  sh "find build/vendor/ruby/*/gems -name '*.o' | xargs rm -f"
 end
 
 task :generate_readme do
@@ -112,71 +113,51 @@ def create_package(version, target, os_type)
   package_dir = "#{PACKAGE_NAME}"
   package_name = "#{PACKAGE_NAME}-#{VERSION}-#{target}"
   sh "rm -rf #{package_dir}"
-  sh "mkdir #{package_dir}"
+  sh "mkdir -p #{package_dir}"
   sh "mkdir -p #{package_dir}/lib/app"
   sh "mkdir -p #{package_dir}/bin"
   sh "cp build/README.md #{package_dir}"
   sh "cp packaging/pact*.rb #{package_dir}/lib/app"
-
-  # copy pact broker files
   sh "cp packaging/config.ru #{package_dir}/lib/app/"
-  sh "cp packaging/GettingStartedOrderWeb-GettingStartedOrderApi.json #{package_dir}/lib/app/"
-
-  sh "mkdir #{package_dir}/lib/ruby"
-  sh "tar -xzf build/traveling-ruby-#{version}-#{target}.tar.gz -C #{package_dir}/lib/ruby"
-  # From https://curl.se/docs/caextract.html
-  sh "cp packaging/cacert.pem #{package_dir}/lib/ruby/lib/ca-bundle.crt"
-
-  case os_type
-  when :unix
+  sh "cp packaging/*.json #{package_dir}/lib/app/"
+  sh "mkdir -p #{package_dir}/lib/ruby"
+  sh "tar -xzf build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{target}.tar.gz -C #{package_dir}/lib/ruby"
+  if os_type == :windows
+    sh "cp packaging/pact*.bat #{package_dir}/bin"
+  else
     Dir.chdir('packaging'){ Dir['pact*.sh'] }.each do | name |
       sh "cp packaging/#{name} #{package_dir}/bin/#{name.chomp('.sh')}"
     end
-  when :windows
-    sh "cp packaging/pact*.bat #{package_dir}/bin"
-  else
-    raise "We don't serve their kind (#{os_type}) here!"
   end
-
   sh "cp -pR build/vendor #{package_dir}/lib/"
   sh "cp packaging/Gemfile packaging/Gemfile.lock #{package_dir}/lib/vendor/"
 
-    # If packaging for Windows, patch Gemfile.lock for nokogiri platform as we are building platform specific gems with rake-compiler-dock
-    if os_type == :windows
-      lockfile = "#{package_dir}/lib/vendor/Gemfile.lock"
-      if File.exist?(lockfile)
-      content = File.read(lockfile)
-      if content =~ /^    nokogiri \(#{NATIVE_GEM_VERSIONS[ :nokogiri ]}\)/
-        arch = target.include?("arm64") ? "-aarch64-mingw-ucrt" : "-x64-mingw-ucrt"
-        patched = content.gsub(/^    nokogiri \(#{NATIVE_GEM_VERSIONS[ :nokogiri ]}\)/, "    nokogiri (#{NATIVE_GEM_VERSIONS[ :nokogiri ]}#{arch})")
-        File.write(lockfile, patched)
-      end
-      end
+  # If packaging for Windows, patch Gemfile.lock for nokogiri platform as we are building platform specific gems with rake-compiler-dock
+  if os_type == :windows && target.include?("arm64")
+    lockfile = "#{package_dir}/lib/vendor/Gemfile.lock"
+    if File.exist?(lockfile)
+    content = File.read(lockfile)
+    if content =~ /^    nokogiri \(#{NATIVE_GEM_VERSIONS[ :nokogiri ]}\)/
+      arch = "-aarch64-mingw-ucrt"
+      patched = content.gsub(/^    nokogiri \(#{NATIVE_GEM_VERSIONS[ :nokogiri ]}\)/, "    nokogiri (#{NATIVE_GEM_VERSIONS[ :nokogiri ]}#{arch})")
+      File.write(lockfile, patched)
     end
-  
-  sh "mkdir #{package_dir}/lib/vendor/.bundle"
-  sh "cp packaging/bundler-config #{package_dir}/lib/vendor/.bundle/config"
-
-  if target.include? 'windows'
-    sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
-  else
-    sh "sed -i.bak '41s/^/#/' #{package_dir}/lib/ruby/lib/ruby/site_ruby/#{RUBY_COMPAT_VERSION}/bundler/stub_specification.rb"
+    end
   end
 
+  sh "mkdir #{package_dir}/lib/vendor/.bundle"
+  sh "cp packaging/bundler-config #{package_dir}/lib/vendor/.bundle/config"
   remove_unnecessary_files package_dir
   # ensure old native extensions are removed before adding the portable traveling-ruby ones
-  download_and_unpack_ext(package_dir, target, NATIVE_GEMS) if ENV['WITH_NATIVE_EXT']
-
+  download_and_unpack_ext(package_dir, target, NATIVE_GEMS)
   if !ENV['DIR_ONLY']
     sh "mkdir -p pkg"
 
-  # https://unix.stackexchange.com/questions/282055/a-lot-of-files-inside-a-tar
-  sh "#{RUBY_PLATFORM =~ /darwin/ ? 'COPYFILE_DISABLE=1' : ''} tar -czf pkg/#{package_name}.tar.gz #{package_dir}"
-
-  sh "rm -rf #{package_dir}"
+    # https://unix.stackexchange.com/questions/282055/a-lot-of-files-inside-a-tar
+    sh "#{RUBY_PLATFORM =~ /darwin/ ? 'COPYFILE_DISABLE=1' : ''} tar -czf pkg/#{package_name}.tar.gz #{package_dir}"
+    sh "rm -rf #{package_dir}"
   end
 end
-
 def remove_unnecessary_files package_dir
   ## Reduce distribution - https://github.com/phusion/traveling-ruby/blob/master/REDUCING_PACKAGE_SIZE.md
   # Remove tests
@@ -305,29 +286,33 @@ end
 
 def download_runtime(version, target)
   sh "cd build && curl -L -O --fail " +
-     "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-#{version}-#{target}.tar.gz"
+     "https://github.com/trubygems/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-#{version}-#{target}.tar.gz"
 end
 
 def download_and_unpack_ext(package_dir, target, native_gems)
   native_gems.each do |native_gem|
     is_windows = target.include?("windows")
+    is_arm64 = target.include?("arm64")
     is_nokogiri = native_gem.start_with?("nokogiri-")
-    tarball = "build/traveling-ruby-#{TRAVELING_RUBY_VERSION}-#{target}-#{native_gem}.tar.gz"
-    url = "https://github.com/YOU54F/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{target}-#{native_gem}.tar.gz"
+    native_gem_alt = is_windows && is_nokogiri && is_arm64 ? "#{native_gem}-aarch64-mingw-ucrt" : native_gem
+    tarball = "build/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{target}-#{native_gem_alt}.tar.gz"
+    url = "https://github.com/trubygems/traveling-ruby/releases/download/rel-#{TRAVELING_RUBY_PKG_DATE}/traveling-ruby-gems-#{TRAVELING_RUBY_VERSION}-#{target}-#{native_gem_alt}.tar.gz"
 
     sh "curl -L --fail #{url} -o #{tarball}"
 
-    if is_windows && is_nokogiri
+    if is_windows && is_nokogiri && is_arm64
       gem_dir = "#{package_dir}/lib/vendor/ruby/#{RUBY_COMPAT_VERSION}/gems"
       spec_dir = "#{package_dir}/lib/vendor/ruby/#{RUBY_COMPAT_VERSION}/specifications"
       sh "mkdir -p #{gem_dir} #{spec_dir}"
       # Unpack gem contents
       sh "rm -rf #{gem_dir}/#{native_gem}"
-      sh "mkdir -p #{gem_dir}/#{native_gem}"
+      sh "mkdir -p #{gem_dir}/#{native_gem_alt}"
       wildcards_flag = RUBY_PLATFORM =~ /linux/ ? "--wildcards" : ""
-      sh "tar -xzf #{tarball} #{wildcards_flag} --strip-components=1 -C #{gem_dir}/#{native_gem} 'nokogiri-*'"
+      sh "tar -xzf #{tarball} #{wildcards_flag} --strip-components=1 -C #{gem_dir}/#{native_gem_alt} 'nokogiri-*'"
       # Unpack gemspec
       sh "tar -xzf #{tarball} #{wildcards_flag} --strip-components=0 -C #{spec_dir} 'nokogiri-*.gemspec'"
+      # remove ruby gemspec
+      sh "rm -f #{spec_dir}/#{native_gem}.gemspec"
     else
       sh "tar -xzf #{tarball} -C #{package_dir}/lib/vendor/ruby"
     end
